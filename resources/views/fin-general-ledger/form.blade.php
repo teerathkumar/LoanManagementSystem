@@ -7,7 +7,7 @@
 
         <div class="row">
             <div class="col-md-6">
-                <h3>{{$Reference}}</h3>
+<!--                <h3>{{$Reference}}</h3>-->
                 <input type="hidden" name="reference" value="{{$Reference}}" />
                 <select name="reference" id="reference" class="form-control select-search">
                     <option value="">Select Payment Type</option>
