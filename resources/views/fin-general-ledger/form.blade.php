@@ -6,6 +6,7 @@
         </div>
 
         <div class="row">
+            <div class="col-md-6"><input type="date" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
             <div class="col-md-6">
 <!--                <h3>{{$Reference}}</h3>-->
                 <input type="hidden" name="reference" value="{{$Reference}}" />
@@ -19,7 +20,6 @@
                 </select>
 
             </div>
-            <div class="col-md-6"><h3>{{$TxnDate}}</h3><input type="hidden" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
         </div>
 
         <hr>
