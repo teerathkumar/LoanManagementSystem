@@ -21,3 +21,12 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+/nbproject/private/
+/LOS_Sample/nbproject/private/
+nbproject/private/private.properties
+nbproject/private/private.xml
+nbproject__/private/private.properties
+*.xml
+nbproject__/project.properties
+nbproject/private/private.xml
+LOS_Sample/nbproject/project.properties
