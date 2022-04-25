@@ -6,7 +6,19 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6"><h3>{{$Reference}}</h3><input type="hidden" name="reference" value="{{$Reference}}" /></div>
+            <div class="col-md-6">
+                <h3>{{$Reference}}</h3>
+                <input type="hidden" name="reference" value="{{$Reference}}" />
+                <select name="reference" id="reference" class="form-control select-search">
+                    <option value="">Select Payment Type</option>
+                    <option value="1">BPV</option>
+                    <option value="2">BRV</option>
+                    <option value="3">CPV</option>
+                    <option value="4">CRV</option>
+                    <option value="5">JV</option>
+                </select>
+
+            </div>
             <div class="col-md-6"><h3>{{$TxnDate}}</h3><input type="hidden" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
         </div>
 
@@ -30,7 +42,7 @@
             </div>
 
         </div>
-<hr>
+        <hr>
         <div class="row" style="font-size: 18px; font-weight: bold;">
             <div class="col-md-1">S#</div>
             <div class="col-md-7">Account</div>
@@ -70,5 +82,5 @@
     </div>
 </div>
 <script>
-    
+
 </script>
