@@ -97,6 +97,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::patch('update/{ttr}', 'FinGeneralLedgerController@update')->name('fin-general-ledgers.update');
             Route::post('store', 'FinGeneralLedgerController@store')->name('fin-general-ledgers.store');
         });
+        Route::group(['prefix' => 'checkbook'], function () {
+            Route::get('/', 'FinCheckbookController@index');
+            Route::get('index', 'FinCheckbookController@index')->name('fin-checkbooks.index');
+            Route::get('create', 'FinCheckbookController@create')->name('fin-checkbooks.create');
+            Route::delete('destroy/{ttr}', 'FinCheckbookController@destroy')->name('fin-checkbooks.destroy');
+            Route::get('show', 'FinCheckbookController@show')->name('fin-checkbooks.show');
+            Route::get('edit/{ttr}', 'FinCheckbookController@edit')->name('fin-checkbooks.edit');
+            Route::patch('update/{ttr}', 'FinCheckbookController@update')->name('fin-checkbooks.update');
+            Route::post('store', 'FinCheckbookController@store')->name('fin-checkbooks.store');
+        });
         Route::group(['prefix' => 'accounts'], function () {
             Route::get('/', 'FinChartOfAccountController@index');
             Route::get('index', 'FinChartOfAccountController@index')->name('fin-chart-of-accounts.index');

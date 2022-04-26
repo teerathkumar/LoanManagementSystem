@@ -1,14 +1,13 @@
 <div class="box box-info padding-1">
     <div class="box-body">
         <div class="row">
-            <div class="col-md-6">Reference</div>
-            <div class="col-md-6">Transaction Date</div>
+            <div class="col-md-4">Reference</div>
+            <div class="col-md-4">Transaction Date</div>
+            <div class="col-md-4">Cheque Number</div>
         </div>
 
         <div class="row">
-            <div class="col-md-6"><input type="date" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
-            <div class="col-md-6">
-<!--                <h3>{{$Reference}}</h3>-->
+            <div class="col-md-4">
                 <input type="hidden" name="reference" value="{{$Reference}}" />
                 <select name="reference" id="reference" class="form-control select-search">
                     <option value="">Select Payment Type</option>
@@ -20,6 +19,8 @@
                 </select>
 
             </div>
+            <div class="col-md-4"><input class="form-control" type="date" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
+            <div class="col-md-4"><input class="form-control" type="number" name="chqnum" id="chqnum" value="{{$chqnum}}" /></div>
         </div>
 
         <hr>

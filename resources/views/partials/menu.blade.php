@@ -78,6 +78,7 @@
                             <li class="nav-item"><a href="{{ route('fin-general-ledgers.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-general-ledgers.index']) ? 'active' : '' }}">General Ledger</a></li>
                             <li class="nav-item"><a href="{{ route('fin-chart-of-accounts.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-chart-of-accounts.index']) ? 'active' : '' }}">Chart of Accounts</a></li>
                             <li class="nav-item"><a href="{{ route('fin-banks-accounts.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-banks-accounts.index']) ? 'active' : '' }}">Bank Accounts</a></li>
+                            <li class="nav-item"><a href="{{ route('fin-checkbooks.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-checkbooks.index']) ? 'active' : '' }}">Checkbooks</a></li>
                         </ul>
                     </li>
                     <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['hr-employees.index', 'hr-jobs.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
