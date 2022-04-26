@@ -76,7 +76,7 @@ class FinGeneralLedgerController extends Controller
         $LastSeries = FinGeneralLedger::orderBy("id", "desc")->first()->txn_series;
         extract($request->all());
         $TxnDate = date("Y-m-d", strtotime($TxnDate));
-        $ChqNum = date("Y-m-d", strtotime($chqnum));
+        $ChqNum = $chqnum;
         //dd($request->all());
         $userId = \Illuminate\Support\Facades\Auth::user()->id;
         
