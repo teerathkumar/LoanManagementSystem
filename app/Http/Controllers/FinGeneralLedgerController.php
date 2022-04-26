@@ -51,7 +51,8 @@ class FinGeneralLedgerController extends Controller
         $data = FinGeneralLedger::where('cheque_number','!=','NULL')->orderBy("id", "desc")->first();
 //        dd($data);
         if($data){
-            $chqnum = $data->cheque_number+1;
+            $chqnum = $data->cheque_number;
+            $chqnum += 1;
         } else {
             $chqnum = "1";
         }
