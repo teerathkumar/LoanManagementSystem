@@ -34,7 +34,7 @@ class FinGeneralLedger extends Model
      *
      * @var array
      */
-    protected $fillable = ['slip_id','loan_id','user_id', 'details', 'debit','credit','txn_date','txn_type','txn_series','office_id'];
+    protected $fillable = ['slip_id','loan_id','user_id', 'details', 'debit','credit','txn_date','txn_type','cheque_number', 'txn_series','office_id'];
 
     
     public function userinfo()

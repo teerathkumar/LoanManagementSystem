@@ -48,7 +48,17 @@ class FinGeneralLedgerController extends Controller
         $TxnDate = date("M d Y");
         $Reference = "BPV001";
         
-        return view('fin-general-ledger.create', compact('finGeneralLedger','chartOfAccounts', 'Reference', 'TxnDate'));
+        $data = FinGeneralLedger::where('cheque_number','!=','NULL')->orderBy("id", "desc")->first();
+//        dd($data);
+        if($data){
+            $chqnum = $data->cheque_number+1;
+        } else {
+            $chqnum = "1";
+        }
+        
+//        $chqnum = "1";
+        
+        return view('fin-general-ledger.create', compact('finGeneralLedger','chartOfAccounts', 'Reference', 'TxnDate', 'chqnum'));
     }
 
     /** 
@@ -65,12 +75,13 @@ class FinGeneralLedgerController extends Controller
         $LastSeries = FinGeneralLedger::orderBy("id", "desc")->first()->txn_series;
         extract($request->all());
         $TxnDate = date("Y-m-d", strtotime($TxnDate));
+        $ChqNum = date("Y-m-d", strtotime($chqnum));
         //dd($request->all());
         $userId = \Illuminate\Support\Facades\Auth::user()->id;
         
         //Maintain General Ledger
         $Model_GL = \App\Models\FinGeneralLedger::create([
-                    'user_id' => $userId,'details'=>$purpose, 'debit' => 0, 'credit' => 0, 'txn_date' => $TxnDate, 'txn_type' => 1,'txn_series'=>$LastSeries, 'office_id' => 1
+                    'user_id' => $userId,'details'=>$purpose, 'debit' => 0, 'credit' => 0, 'txn_date' => $TxnDate, 'txn_type' => 1,'txn_series'=>$LastSeries+1,'cheque_number'=>$ChqNum, 'office_id' => 1
         ]);
         $FinGL_Id = $Model_GL->id;
         
