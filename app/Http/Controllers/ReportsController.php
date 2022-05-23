@@ -44,23 +44,23 @@ class ReportsController extends Controller {
                     gld.debit,gld.credit, gl.txn_date, gl.id"))
                 ->get();
 
-/*
- *    +"L1_Code": "01"
-      +"L1_Title": "Assets"
-      +"L2_Code": "01-01"
-      +"L2_Title": "Non-Current Assets"
-      +"L3_Code": "01-01-004"
-      +"L3_Title": "Lendings"
-      +"L4_Code": "01-01-004-001"
-      +"L4_Title": "Lendings To Financial Institutions"
-      +"L5_Code": "01-01-004-001-0001"
-      +"L5_Title": "Lendings To Financial Institutions"
-      +"debit": "9290000.00"
-      +"credit": "0.00"
-      +"txn_date": "2022-03-24"
-      +"id": 1
- */
-        
+        /*
+         *    +"L1_Code": "01"
+          +"L1_Title": "Assets"
+          +"L2_Code": "01-01"
+          +"L2_Title": "Non-Current Assets"
+          +"L3_Code": "01-01-004"
+          +"L3_Title": "Lendings"
+          +"L4_Code": "01-01-004-001"
+          +"L4_Title": "Lendings To Financial Institutions"
+          +"L5_Code": "01-01-004-001-0001"
+          +"L5_Title": "Lendings To Financial Institutions"
+          +"debit": "9290000.00"
+          +"credit": "0.00"
+          +"txn_date": "2022-03-24"
+          +"id": 1
+         */
+
         $l1_array = array();
         $l2_array = array();
         $l3_array = array();
@@ -69,27 +69,26 @@ class ReportsController extends Controller {
         $raja_array = array();
         if ($ReportData) {
             foreach ($ReportData as $reportrow) {
-                $raja_array[$reportrow->L1_Code][$reportrow->L2_Code][$reportrow->L3_Code][$reportrow->L4_Code][$reportrow->L5_Code][]=$reportrow;
+                $raja_array[$reportrow->L1_Code][$reportrow->L2_Code][$reportrow->L3_Code][$reportrow->L4_Code][$reportrow->L5_Code][] = $reportrow;
                 $l1_array[$reportrow->L1_Code]['Debit'] += $reportrow->debit;
                 $l1_array[$reportrow->L1_Code]['Credit'] += $reportrow->credit;
                 $l1_array[$reportrow->L1_Code]['Title'] = $reportrow->L1_Title;
-                
+
                 $l2_array[$reportrow->L2_Code]['Debit'] += $reportrow->debit;
                 $l2_array[$reportrow->L2_Code]['Credit'] += $reportrow->credit;
                 $l2_array[$reportrow->L2_Code]['Title'] = $reportrow->L2_Title;
-                
+
                 $l3_array[$reportrow->L3_Code]['Debit'] += $reportrow->debit;
                 $l3_array[$reportrow->L3_Code]['Credit'] += $reportrow->credit;
                 $l3_array[$reportrow->L3_Code]['Title'] = $reportrow->L3_Title;
-                
+
                 $l4_array[$reportrow->L4_Code]['Debit'] += $reportrow->debit;
                 $l4_array[$reportrow->L4_Code]['Credit'] += $reportrow->credit;
                 $l4_array[$reportrow->L4_Code]['Title'] = $reportrow->L4_Title;
-                
+
                 $l5_array[$reportrow->L5_Code]['Debit'] += $reportrow->debit;
                 $l5_array[$reportrow->L5_Code]['Credit'] += $reportrow->credit;
                 $l5_array[$reportrow->L5_Code]['Title'] = $reportrow->L5_Title;
-                
             }
         }
 
@@ -103,7 +102,7 @@ class ReportsController extends Controller {
 //        print_r($raja_array);
 //        echo "</pre>";
 //        dd($ReportData);
-        
+
         $d['L1'] = $l1_array;
         $d['L2'] = $l2_array;
         $d['L3'] = $l3_array;
@@ -114,13 +113,19 @@ class ReportsController extends Controller {
         return view('reports.trialreport', $d);
         //dd($request->all());
     }
+
     public function Financial() {
         //dd("Yeah");
         $d['report'] = "Financial";
+
+        $d['chartOfAccounts'] = \App\Models\FinChartOfAccount::where('level', 'L5')->select('id', 'title', 'code')->orderBy("code")->get();
+
         return view('reports.finreport', $d);
     }
 
     public function FinancialReport(Request $request) {
+
+        //dd($request->all());
         $this->validate($request, [
             'datefrom' => 'required|date',
             'dateto' => 'required|date'
@@ -128,6 +133,7 @@ class ReportsController extends Controller {
 
         $d['datef'] = $request->datefrom;
         $d['datet'] = $request->dateto;
+        $d['chartofaccount'] = $request->chartofaccount;
         $d['i'] = 0;
 
         /*
@@ -142,8 +148,18 @@ class ReportsController extends Controller {
                 ->join("fin_chart_of_accounts as fca", "fca.id", "=", "gld.coa_id")
                 ->whereBetween("gl.txn_date", array($request->datefrom, $request->dateto), "and")
                 ->select(DB::raw(""
-                                . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id"))
+                                . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id, gl.txn_type, gl.txn_series"))
                 ->get();
+        if (isset($request->chartofaccount)) {
+            $ReportData = DB::table("fin_general_ledgers as gl")
+                    ->join("fin_general_ledger_details as gld", "gld.fin_gen_id", "=", "gl.id")
+                    ->join("fin_chart_of_accounts as fca", "fca.id", "=", "gld.coa_id")
+                    ->whereBetween("gl.txn_date", array($request->datefrom, $request->dateto), "and")
+                    ->where("gld.coa_id", $request->chartofaccount)
+                    ->select(DB::raw(""
+                                    . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id"))
+                    ->get();
+        }
         $raja_array = array();
         if ($ReportData) {
             foreach ($ReportData as $reportrow) {

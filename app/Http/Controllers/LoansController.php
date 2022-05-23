@@ -298,7 +298,7 @@ class LoansController extends Controller {
         $ChequeDate = $disb_date;
         $ApprovedLoanAmount = $amount_pr;
         $SrChargeRate = $markup_rate;
-        $SrChargeRate = 11.55;
+        $SrChargeRate = 16;
         $LoanFrequency = $loan_freq;
         $LoanTerm = $loan_period;
         $RepStartDate = $rep_start_date;
