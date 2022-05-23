@@ -355,7 +355,7 @@ class LoansController extends Controller {
         //$type is type
         $fv = 0;
         $pv = $ApprovedLoanAmount;
-        $rate = ($SrChargeRate / 100) / 365 * 30;
+        $rate = ($SrChargeRate / 100) / 360 * 30;
         $nper = $LoanTerm;
         $type = 0;
 
@@ -366,8 +366,8 @@ class LoansController extends Controller {
                 (1 + $rate) /
                 ((pow(1 + $rate, $nper) - 1) / $rate)) * -1;
         
-        $rate=11.55;
-        echo $this->calPMT($rate, 7, $ApprovedLoanAmount);
+        $rate=16;
+        //echo $this->calPMT($rate, 7, $ApprovedLoanAmount);
         //dd();        
         //dd(round($PMT,6));
         //dd($PMT);
@@ -452,15 +452,16 @@ class LoansController extends Controller {
 
             $MonthlyPrinciple = round($MonthlyPrinciple);
             $MonthlyServiceCharge = round($MonthlyServiceCharge);
-            if($takaful_amount){
-            $MonthlyTakaful = (($ApprovedLoanAmount*0.8/100)/365)*$DaysDiff;
-            if($MonthlyTakaful<0){
-                $MonthlyTakaful = 0;
-            }
-            $MonthlyTakaful = ceil($MonthlyTakaful);
-            } else {
-                $MonthlyTakaful = 0;
-            }
+//            if($takaful_amount){
+//            $MonthlyTakaful = (($ApprovedLoanAmount*0.8/100)/365)*$DaysDiff;
+//            if($MonthlyTakaful<0){
+//                $MonthlyTakaful = 0;
+//            }
+//            $MonthlyTakaful = ceil($MonthlyTakaful);
+//            } else {
+//                
+//            }
+            $MonthlyTakaful = 0;
 
             if ($i == ($SchedLoanTerm / $LoanFrequency)) {
                 if ($ApprovedLoanAmount <> 0) {
