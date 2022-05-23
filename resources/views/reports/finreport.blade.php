@@ -31,6 +31,10 @@
                 </tr>
             </thead>
             <tbody>
+                <tr  class="border-blue">
+                    <td style="padding: 4px; border: 1px solid #000000; text-align: center; font-size: 15px; font-weight: bold;" colspan="6">{{ $ReportRow[0]->txn_type=="1" ? "BPV" : "CPV" }} {{ $ReportRow[0]->txn_series }}</td>
+                </tr>
+
 <?php $GrandDebit=0 ?>               
 <?php $GrandCredit=0 ?>                
 <?php $i=0 ?>
@@ -66,6 +70,17 @@
 
             <div class="box box-info padding-1 col-sm-6">
                 <div class="box-body">
+                    <div class="form-group">
+                        {{ Form::label('Select Chart of Account:') }}
+                        <select name="chartofaccount" id="chartofaccount" class="form-control select-search">
+                            <option value="">Select Chart Of Account</option>
+                            @foreach($chartOfAccounts as $row)
+                            <option value="{{$row->id}}">{{$row->code}} - {{$row->title}}</option>
+                            @endforeach
+                        </select>
+                        
+                        
+                    </div>
                     <div class="form-group">
                         {{ Form::label('Date From:') }}
                         {{ Form::date('datefrom', null, ['class' => 'form-control' . ($errors->has('datefrom') ? ' is-invalid' : ''), 'placeholder' => 'Date From:']) }}
