@@ -157,7 +157,7 @@ class ReportsController extends Controller {
                     ->whereBetween("gl.txn_date", array($request->datefrom, $request->dateto), "and")
                     ->where("gld.coa_id", $request->chartofaccount)
                     ->select(DB::raw(""
-                                    . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id"))
+                                    . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id, gl.txn_type, gl.txn_series"))
                     ->get();
         }
         $raja_array = array();
