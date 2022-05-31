@@ -197,16 +197,16 @@ class ReportsController extends Controller {
                 ->where("loan_payment_due.payment_status", "=", "0")
                 ->groupBy("loan_history.id")
                 ->select(DB::raw(""
-                                . "concat(loan_borrowers.fname,' ',loan_borrowers.mname,' ', loan_borrowers.lname) as 'b_name', "
-                                . "general_offices.name, "
-                                . "sum(loan_payment_due.amount_pr) as 's_am_pr', "
-                                . "sum(loan_payment_due.amount_mu) as 's_am_mu',"
-                                . "sum(if(loan_payment_due.due_date between '" . ($request->datefrom) . "' and '" . ($request->dateto) . "',loan_payment_due.amount_pr,0 )) as 'c_am_pr', "
-                                . "sum(if(loan_payment_due.due_date between '" . ($request->datefrom) . "' and '" . ($request->dateto) . "',loan_payment_due.amount_mu,0 )) as 'c_am_mu' "
-                                . ""), "loan_history.*")
+                . "concat(loan_borrowers.fname,' ',loan_borrowers.mname,' ', loan_borrowers.lname) as 'b_name', "
+                . "general_offices.name, "
+                . "sum(loan_payment_due.amount_pr) as 's_am_pr', "
+                . "sum(loan_payment_due.amount_mu) as 's_am_mu',"
+                . "sum(if(loan_payment_due.due_date between '" . ($request->datefrom) . "' and '" . ($request->dateto) . "',loan_payment_due.amount_pr,0 )) as 'c_am_pr', "
+                . "sum(if(loan_payment_due.due_date between '" . ($request->datefrom) . "' and '" . ($request->dateto) . "',loan_payment_due.amount_mu,0 )) as 'c_am_mu' "
+                . ""), "loan_history.*")
                 ->get();
         $d['ReportData'] = $ReportData;
-//        dd($ReportData);
+        //dd($ReportData);
 //        $loanBankslips = DB::table('loan_bankslips')
 //            ->join('loan_payment_recovereds', 'loan_payment_recovereds.bank_slip_id', '=', 'loan_bankslips.id')
 //            ->join('fin_banks_accounts', 'fin_banks_accounts.id', '=', 'loan_bankslips.bankAccountId')

@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('page_title', 'Manage Loan Details')
+@section('page_title', 'Manage Financing Details')
 @section('content')
 
 <div class="card">
     <div class="card-header header-elements-inline">
-        <h6 class="card-title">Process Loan Scheduling</h6>
+        <h6 class="card-title">Process Financing Scheduling</h6>
         {!! Qs::getPanelOptions() !!}
         
         
@@ -23,8 +23,8 @@
                             <th>Name</th>
                             <th>Group</th>
                             <th>Office</th>
-                            <th>P.Amount</th>
-                            <th>M.Amount</th>
+                            <th>Principle</th>
+                            <th>Profit</th>
                             <th>Disb.Date</th>
                             <th>Status</th>
                             <th>Manage</th>
@@ -51,7 +51,7 @@
 
                                         <div class="dropdown-menu dropdown-menu-right">
                                             {{--View--}}
-                                            <a href="{{ route('ttr.showloan', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> View</a>
+                                            <a href="{{ route('ttr.showloan', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> View Profile</a>
                                             <a href="{{ route('ttr.show_schedule', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> View Schedule</a>
                                             <a href="{{ route('ttr.loanstep', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> Generate Schedule</a>
                                             <a href="{{ route('loans.pay', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Pay Installment</a>
@@ -59,15 +59,13 @@
 
                                             @if(Qs::userIsTeamSA())
                                             {{--Manage--}}
-                                            <a href="{{ route('ttr.manage', $mc->id) }}" class="dropdown-item"><i class="icon-plus-circle2"></i> Manage</a>
                                             {{--Edit--}}
-                                            <a href="{{ route('ttr.edit', $mc->id) }}" class="dropdown-item"><i class="icon-pencil"></i> Edit</a>
+                                            
                                             @endif
 
                                             {{--Delete--}}
                                             @if(Qs::userIsSuperAdmin())
-                                            <a id="{{ $mc->id }}" onclick="confirmDelete(this.id)" href="#" class="dropdown-item"><i class="icon-trash"></i> Delete</a>
-                                            <form method="post" id="item-delete-{{ $mc->id }}" action="{{ route('ttr.destroy', $mc->id) }}" class="hidden">@csrf @method('delete')</form>
+                                            
                                             @endif
 
 

@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Payment Recovered')
+@section('page_title', 'Financing Payment Recovered')
 @section('content')
 
     <div class="card card-default">
         <div class="card-header">
-            <span class="card-title">Create Loan Payment Recovered</span>
+            <span class="card-title">Create Financing Payment Recovered</span>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('loan-payment-recovereds.store') }}"  role="form" enctype="multipart/form-data">

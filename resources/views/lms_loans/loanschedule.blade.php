@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Schedule')
+@section('page_title', 'Financing Schedule')
 @section('content')
 
 <div class="card">
     <div class="card-header header-elements-inline">
-        <h6 class="card-title">Loan Schedule (A/c#: {{ $ttr_id }})</h6>
+        <h6 class="card-title">Financing Schedule (A/c#: {{ $ttr_id }})</h6>
         {!! Qs::getPanelOptions() !!}
     </div>
     <div class="card-body">
@@ -20,7 +20,7 @@
                         <tr>
                             <th>Due ID</th>
                             <th>Principal</th>
-                            <th>Markup</th>
+                            <th>Profit</th>
                             <th>Total</th>
                             <th>Paid Date</th>
                         </tr>
@@ -29,9 +29,9 @@
                         @foreach($paidinfo as $mc)
                         <tr>
                             <td>{{ $mc->due_id }}</td>
-                            <td>{{ number_format($mc->amount_pr) }}</td>
-                            <td>{{ number_format($mc->amount_mu) }}</td>
-                            <td>{{ number_format($mc->amount_total) }}</td>
+                            <td align="right">{{ number_format($mc->amount_pr) }}</td>
+                            <td align="right">{{ number_format($mc->amount_mu) }}</td>
+                            <td align="right">{{  number_format(($mc->loan_history->total_amount_pr-$mc->amount_pr)) }}</td>
                             <td>{{ date("d M Y",strtotime($mc->recovered_date)) }}</td>
                         </tr>
                         @endforeach
@@ -52,10 +52,10 @@
                     <thead>
                         <tr>
                             <th>Inst.No</th>
-                            <th>Principal</th>
-                            <th>Markup</th>
-                            <th>Total</th>
                             <th>Due Date</th>
+                            <th>Principal</th>
+                            <th>Profit</th>
+                            <th>Outstanding Principle</th>
                             <th>Payment Status</th>
                         </tr>
                     </thead>
@@ -63,10 +63,11 @@
                         @foreach($dueinfo as $mc)
                         <tr>
                             <td>{{ $mc->installment_no }}</td>
+                            <td>{{ date("d M Y",strtotime($mc->due_date)) }}</td>
                             <td>{{ number_format($mc->amount_pr,2) }}</td>
                             <td>{{ number_format($mc->amount_mu,2) }}</td>
                             <td>{{ number_format($mc->amount_total,2) }}</td>
-                            <td>{{ date("d M Y",strtotime($mc->due_date)) }}</td>
+                            
 <!--                            <td>{{ $mc->payment_status==1 ? "Paid" : "Unpaid" }}</td>-->
                             <td><?php echo $mc->payment_status ? '<span class="badge badge-pill badge-success">&nbsp;&nbsp;&nbsp;&nbsp;PAID&nbsp;&nbsp;&nbsp;&nbsp;</span>' : '<span class="badge badge-pill badge-danger">UN-PAID</span>' ?></td>
                         </tr>

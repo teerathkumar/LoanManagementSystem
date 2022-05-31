@@ -57,7 +57,7 @@ class LoansController extends Controller {
     function show_schedule($tt_id) {
         //dd(__FUNCTION__);
         $d['ttr_id'] = $tt_id;
-        $d['dueinfo'] = \App\Models\LoanPaymentDue::where(['loan_id' => $tt_id])->get();
+        $d['dueinfo'] = \App\Models\LoanPaymentDue::where(['loan_id' => $tt_id])->with('loan_history')->get();
         $d['paidinfo'] = \App\Models\LoanPaymentRecovered::where(['loan_id' => $tt_id])->get();
         $d['bankinfo'] = \App\Models\LMSBankSlip::where(['slip_date' => date("Y-m-d")])->get();
         return view('lms_loans.loanschedule', $d);
@@ -515,7 +515,8 @@ class LoansController extends Controller {
             $GrandDays += $DaysDiff;
             $GrandTakaful += $MonthlyTakaful;
         }
-
+        \App\Models\LoanHistory::find($LoanId)->update(['loan_status_id'=>10]);
+        
         $LastSeries = \App\Models\FinGeneralLedger::orderBy("id", "desc")->first();
         if(!isset($LastSeries->txn_series)){
             $LastSeries=0;

@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Payment Recovered')
+@section('page_title', 'Financing Payment Recovered')
 @section('content')
 
                 <div class="card">
@@ -7,7 +7,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Loan Payment Recovered') }}
+                                {{ __('Financing Payment Recovered') }}
                             </span>
 
                              <div class="float-right">
@@ -31,7 +31,7 @@
                                         <th>No</th>
                                         
 										<th>Due Id</th>
-										<th>Loan Id</th>
+										<th>Financing Id</th>
 										<th>Amount Total</th>
 										<th>Amount Pr</th>
 										<th>Amount Mu</th>

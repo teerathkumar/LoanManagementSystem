@@ -65,8 +65,6 @@
                         {{--Timetables--}}
                             <li class="nav-item"><a href="{{ route('general-users.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['general-users.index']) ? 'active' : '' }}">Users</a></li>
                             <li class="nav-item"><a href="{{ route('general-offices.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['general-offices.index']) ? 'active' : '' }}">Offices</a></li>
-                            <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">User Roles</a></li>
-                            <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">User Roles Setting</a></li>
                         </ul>
                     </li>
                     <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['fin-general-ledgers.index','fin-chart-of-accounts.index','fin-banks-accounts.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
@@ -90,7 +88,7 @@
                             <li class="nav-item"><a href="{{ route('hr-jobs.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['hr-jobs.index']) ? 'active' : '' }}">Employees Designations</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['tt.borrowers','tt.loandetails', 'tt.index', 'ttr.edit', 'ttr.show', 'ttr.manage']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['scan_aml','upload_aml']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                         <a href="#" class="nav-link"><i class="icon-collaboration"></i> <span> AML Management</span></a>
 
                         <ul class="nav nav-group-sub" data-submenu-title="AML Management">
@@ -98,12 +96,14 @@
                             <li class="nav-item"><a href="{{ route('upload_aml') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['upload_aml']) ? 'active' : '' }}">Upload Sheet</a></li>                    
                         </ul>
                     </li>
-                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['tt.borrowers','tt.loandetails', 'tt.index', 'ttr.edit', 'ttr.show', 'ttr.manage']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-                        <a href="#" class="nav-link"><i class="icon-collaboration"></i> <span> Loans Management</span></a>
+                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['kibor.all','tt.borrowers','tt.loandetails', 'ttr.edit', 'ttr.show', 'ttr.manage']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                        <a href="#" class="nav-link"><i class="icon-collaboration"></i> <span> Financing Management</span></a>
 
-                        <ul class="nav nav-group-sub" data-submenu-title="Loan Management">
+                        <ul class="nav nav-group-sub" data-submenu-title="Financing Management">
                         <li class="nav-item"><a href="{{ route('tt.borrowers') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.borrowers']) ? 'active' : '' }}">Borrowers</a></li>
-                        <li class="nav-item"><a href="{{ route('tt.loandetails') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.loandetails']) ? 'active' : '' }}">Loan Details</a></li>
+                        <li class="nav-item"><a href="{{ route('kibor.all') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['kibor.all']) ? 'active' : '' }}">Kibor</a></li>
+                        <li class="nav-item"><a href="{{ route('kibor.history') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['kibor.history']) ? 'active' : '' }}">Kibor History</a></li>
+                        <li class="nav-item"><a href="{{ route('tt.loandetails') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.loandetails']) ? 'active' : '' }}">Financing Details</a></li>
                         
                         </ul>
                     </li>

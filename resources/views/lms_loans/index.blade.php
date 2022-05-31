@@ -1,17 +1,17 @@
 @extends('layouts.master')
-@section('page_title', 'Manage Loans')
+@section('page_title', 'Manage Financing')
 @section('content')
 
 <div class="card">
     <div class="card-header header-elements-inline">
-        <h6 class="card-title">Manage Loans</h6>
+        <h6 class="card-title">Manage Financing</h6>
         {!! Qs::getPanelOptions() !!}
     </div>
 
     <div class="card-body">
         <ul class="nav nav-tabs nav-tabs-highlight">
             @if(Qs::userIsTeamSA())
-            <li class="nav-item"><a href="#add-tt" class="nav-link active" data-toggle="tab">Create Loan</a></li>
+            <li class="nav-item"><a href="#add-tt" class="nav-link active" data-toggle="tab">Create Financing</a></li>
             @endif
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Show TimeTables</a>

@@ -27,15 +27,15 @@
                     <th colspan="2">Current Due</th>
                     <th colspan="2">Total Due</th>
                     <th colspan="2">Total Recovered</th>
-                    <th rowspan="2">Last Recovery Date</th>
+<!--                    <th rowspan="2">Last Recovery Date</th>-->
                 </tr>
                 <tr class="datatable-header" style="text-align: center; ">
                     <th>Principle</th>
-                    <th>Markup</th>
+                    <th>Profit</th>
                     <th>Principle</th>
-                    <th>Markup</th>
+                    <th>Profit</th>
                     <th>Principle</th>
-                    <th>Markup</th>
+                    <th>Profit</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,11 +47,11 @@
                     <td>{{ $ReportRow->id }}</td>
                     <td>{{ number_format($ReportRow->c_am_pr) }}</td>
                     <td>{{ number_format($ReportRow->c_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_pr) }}</td>
+                    <td>{{ number_format($ReportRow->total_amount_pr) }}</td>
+                    <td>{{ number_format($ReportRow->total_amount_mu) }}</td>
                     <td>{{ number_format($ReportRow->s_am_mu) }}</td>
                     <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ $ReportRow->b_name }}</td>
+<!--                    <td>{{ $ReportRow->b_name }}</td>-->
 
                 </tr>                
                 <tr  class="border-blue">

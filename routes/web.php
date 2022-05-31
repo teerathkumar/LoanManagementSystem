@@ -66,26 +66,24 @@ Route::group(['middleware' => 'auth'], function () {
     });
     /*     * ************* Reports **************** */
     Route::group(['prefix' => 'reports'], function () {
-        
+
         Route::get('financial', 'ReportsController@financial')->name('reports.financial');
         Route::post('financialreport', 'ReportsController@financialreport')->name('reports.financialreport');
-        
+
         Route::get('trial', 'ReportsController@trialbalance')->name('reports.trial');
         Route::post('trialreport', 'ReportsController@trialbalancereport')->name('reports.trialreport');
-        
+
         Route::get('dues', 'ReportsController@dues')->name('reports.dues');
         Route::post('duesreport', 'ReportsController@duesreport')->name('reports.duesreport');
-        
+
         Route::get('payments', 'ReportsController@payments')->name('reports.payments');
         Route::post('paymentsreport', 'ReportsController@paymentsreport')->name('reports.paymentsreport');
-        
+
         Route::post('odues', 'ReportsController@odues')->name('reports.odues');
         Route::post('par', 'ReportsController@par')->name('reports.par');
         Route::post('accrued', 'ReportsController@accrued')->name('reports.accrued');
-        
     });
 
-    
     Route::group(['prefix' => 'finance'], function () {
         Route::group(['prefix' => 'ledger'], function () {
             Route::get('/', 'FinGeneralLedgerController@index');
@@ -130,18 +128,17 @@ Route::group(['middleware' => 'auth'], function () {
     });
     //Loans
     Route::group(['prefix' => 'aml'], function () {
-            Route::get('/', 'AmlBlacklistController@index');
-            Route::get('index', 'AmlBlacklistController@index')->name('aml-blacklists.index');
-            Route::get('create', 'AmlBlacklistController@create')->name('aml-blacklists.create');
-            Route::delete('destroy/{ttr}', 'AmlBlacklistController@destroy')->name('aml-blacklists.destroy');
-            Route::get('show', 'AmlBlacklistController@show')->name('aml-blacklists.show');
-            Route::get('edit/{ttr}', 'AmlBlacklistController@edit')->name('aml-blacklists.edit');
-            Route::patch('update/{ttr}', 'AmlBlacklistController@update')->name('aml-blacklists.update');
-            Route::post('store', 'AmlBlacklistController@store')->name('aml-blacklists.store');
+        Route::get('/', 'AmlBlacklistController@index');
+        Route::get('index', 'AmlBlacklistController@index')->name('aml-blacklists.index');
+        Route::get('create', 'AmlBlacklistController@create')->name('aml-blacklists.create');
+        Route::delete('destroy/{ttr}', 'AmlBlacklistController@destroy')->name('aml-blacklists.destroy');
+        Route::get('show', 'AmlBlacklistController@show')->name('aml-blacklists.show');
+        Route::get('edit/{ttr}', 'AmlBlacklistController@edit')->name('aml-blacklists.edit');
+        Route::patch('update/{ttr}', 'AmlBlacklistController@update')->name('aml-blacklists.update');
+        Route::post('store', 'AmlBlacklistController@store')->name('aml-blacklists.store');
 
         Route::get('/scan_aml', 'AmlBlacklistController@index')->name('scan_aml');
         Route::get('/upload_aml', 'AmlBlacklistController@index')->name('upload_aml');
-
     });
     //Loans
     Route::group(['prefix' => 'loans'], function () {
@@ -156,8 +153,32 @@ Route::group(['middleware' => 'auth'], function () {
             Route::patch('update/{ttr}', 'LoanBorrowerController@update')->name('loan-borrowers.update');
             Route::post('store', 'LoanBorrowerController@store')->name('loan-borrowers.store');
         });
-
+        //Kibor
+        Route::group(['prefix' => 'kibor'], function () {
+            Route::get('/', 'LoanKiborRateController@index');
+            Route::get('index', 'LoanKiborRateController@index')->name('loan-kibor-rates.index');
+            Route::get('create', 'LoanKiborRateController@create')->name('loan-kibor-rates.create');
+            Route::delete('destroy/{ttr}', 'LoanKiborRateController@destroy')->name('loan-kibor-rates.destroy');
+            Route::get('show', 'LoanKiborRateController@show')->name('loan-kibor-rates.show');
+            Route::get('edit/{ttr}', 'LoanKiborRateController@edit')->name('loan-kibor-rates.edit');
+            Route::patch('update/{ttr}', 'LoanKiborRateController@update')->name('loan-kibor-rates.update');
+            Route::post('store', 'LoanKiborRateController@store')->name('loan-kibor-rates.store');
+        });
+        //Kibor Hisotry
+        Route::group(['prefix' => 'kibor'], function () {
+            Route::get('/', 'LoanKiborHistoryController@index');
+            Route::get('index', 'LoanKiborHistoryController@index')->name('loan-kibor-histories.index');
+            Route::get('create', 'LoanKiborHistoryController@create')->name('loan-kibor-histories.create');
+            Route::delete('destroy/{ttr}', 'LoanKiborHistoryController@destroy')->name('loan-kibor-histories.destroy');
+            Route::get('show', 'LoanKiborHistoryController@show')->name('loan-kibor-histories.show');
+            Route::get('edit/{ttr}', 'LoanKiborHistoryController@edit')->name('loan-kibor-histories.edit');
+            Route::patch('update/{ttr}', 'LoanKiborHistoryController@update')->name('loan-kibor-histories.update');
+            Route::post('store', 'LoanKiborHistoryController@store')->name('loan-kibor-histories.store');
+        });
+        //Loans
         Route::get('/', 'LoansController@borrowers')->name('tt.borrowers');
+        Route::get('/kibor', 'LoanKiborRateController@index')->name('kibor.all');
+        Route::get('/kiborhistory', 'LoanKiborHistoryController@index')->name('kibor.history');
         Route::get('/loandetails', 'LoansController@loandetails')->name('tt.loandetails');
         Route::get('/', 'LoansController@index')->name('tt.borrowers');
         Route::get('show_schedule/{ttr}', 'LoansController@show_schedule')->name('ttr.show_schedule');
@@ -165,7 +186,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('gen_schedule/{ttr}', 'LoansController@gen_schedule')->name('ttr.gen_schedule');
         Route::get('loanstep/{ttr}', 'LoansController@loanstep')->name('ttr.loanstep');
         Route::post('storestep', 'LoansController@loanstepStore')->name('storestep');
-        
+
         Route::get('pay_installment/{ttr}', 'LoanPaymentRecoveredController@pay_installment')->name('loans.pay');
     });
     //Payments
@@ -226,42 +247,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group(['prefix' => 'users'], function () {
             Route::get('reset_pass/{id}', 'UserController@reset_pass')->name('users.reset_pass');
         });
-
-        /*         * ************* TimeTables **************** */
-        Route::group(['prefix' => 'timetables'], function () {
-            Route::get('/', 'TimeTableController@index')->name('tt.index');
-
-            Route::group(['middleware' => 'teamSA'], function () {
-                Route::post('/', 'TimeTableController@store')->name('tt.store');
-                Route::put('/{tt}', 'TimeTableController@update')->name('tt.update');
-                Route::delete('/{tt}', 'TimeTableController@delete')->name('tt.delete');
-            });
-
-            /*             * ************* TimeTable Records **************** */
-            Route::group(['prefix' => 'records'], function () {
-
-                Route::group(['middleware' => 'teamSA'], function () {
-                    Route::get('manage/{ttr}', 'TimeTableController@manage')->name('ttr.manage');
-                    Route::post('/', 'TimeTableController@store_record')->name('ttr.store');
-                    Route::get('edit/{ttr}', 'TimeTableController@edit_record')->name('ttr.edit');
-                    Route::put('/{ttr}', 'TimeTableController@update_record')->name('ttr.update');
-                });
-
-                Route::get('show/{ttr}', 'TimeTableController@show_record')->name('ttr.show');
-                Route::get('print/{ttr}', 'TimeTableController@print_record')->name('ttr.print');
-                Route::delete('/{ttr}', 'TimeTableController@delete_record')->name('ttr.destroy');
-            });
-
-            /*             * ************* Time Slots **************** */
-            Route::group(['prefix' => 'time_slots', 'middleware' => 'teamSA'], function () {
-                Route::post('/', 'TimeTableController@store_time_slot')->name('ts.store');
-                Route::post('/use/{ttr}', 'TimeTableController@use_time_slot')->name('ts.use');
-                Route::get('edit/{ts}', 'TimeTableController@edit_time_slot')->name('ts.edit');
-                Route::delete('/{ts}', 'TimeTableController@delete_time_slot')->name('ts.destroy');
-                Route::put('/{ts}', 'TimeTableController@update_time_slot')->name('ts.update');
-            });
-        });
-
         /*         * ************* Payments **************** */
         Route::group(['prefix' => 'payments'], function () {
 
@@ -284,50 +269,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('verify/{id}', 'PinController@verify')->name('pins.verify');
             Route::delete('/', 'PinController@destroy')->name('pins.destroy');
         });
-
-        /*         * ************* Marks **************** */
-        Route::group(['prefix' => 'marks'], function () {
-
-            // FOR teamSA
-            Route::group(['middleware' => 'teamSA'], function () {
-                Route::get('batch_fix', 'MarkController@batch_fix')->name('marks.batch_fix');
-                Route::put('batch_update', 'MarkController@batch_update')->name('marks.batch_update');
-                Route::get('tabulation/{exam?}/{class?}/{sec_id?}', 'MarkController@tabulation')->name('marks.tabulation');
-                Route::post('tabulation', 'MarkController@tabulation_select')->name('marks.tabulation_select');
-                Route::get('tabulation/print/{exam}/{class}/{sec_id}', 'MarkController@print_tabulation')->name('marks.print_tabulation');
-            });
-
-            // FOR teamSAT
-            Route::group(['middleware' => 'teamSAT'], function () {
-                Route::get('/', 'MarkController@index')->name('marks.index');
-                Route::get('manage/{exam}/{class}/{section}/{subject}', 'MarkController@manage')->name('marks.manage');
-                Route::put('update/{exam}/{class}/{section}/{subject}', 'MarkController@update')->name('marks.update');
-                Route::put('comment_update/{exr_id}', 'MarkController@comment_update')->name('marks.comment_update');
-                Route::put('skills_update/{skill}/{exr_id}', 'MarkController@skills_update')->name('marks.skills_update');
-                Route::post('selector', 'MarkController@selector')->name('marks.selector');
-                Route::get('bulk/{class?}/{section?}', 'MarkController@bulk')->name('marks.bulk');
-                Route::post('bulk', 'MarkController@bulk_select')->name('marks.bulk_select');
-            });
-
-            Route::get('select_year/{id}', 'MarkController@year_selector')->name('marks.year_selector');
-            Route::post('select_year/{id}', 'MarkController@year_selected')->name('marks.year_select');
-            Route::get('show/{id}/{year}', 'MarkController@show')->name('marks.show');
-            Route::get('print/{id}/{exam_id}/{year}', 'MarkController@print_view')->name('marks.print');
-        });
-
-        Route::resource('students', 'StudentRecordController');
-        //Route::resource('users', 'UserController');
-        Route::resource('classes', 'MyClassController');
-        Route::resource('sections', 'SectionController');
-        Route::resource('subjects', 'SubjectController');
-        Route::resource('grades', 'GradeController');
-        Route::resource('exams', 'ExamController');
-        Route::resource('dorms', 'DormController');
-        Route::resource('payments', 'PaymentController');
     });
-
-    /*     * ********************** AJAX *************************** */
-    Route::group(['prefix' => 'ajax'], function () {
+    
+      Route::group(['prefix' => 'ajax'], function () {
         Route::get('get_lga/{state_id}', 'AjaxController@get_lga')->name('get_lga');
         Route::get('get_class_sections/{class_id}', 'AjaxController@get_class_sections')->name('get_class_sections');
         Route::get('get_class_subjects/{class_id}', 'AjaxController@get_class_subjects')->name('get_class_subjects');

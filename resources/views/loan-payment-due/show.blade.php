@@ -1,11 +1,11 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Payment Due')
+@section('page_title', 'Financing Payment Due')
 
 @section('content')
                 <div class="card">
                     <div class="card-header">
                         <div class="float-left">
-                            <span class="card-title">Show Loan Payment Due</span>
+                            <span class="card-title">Show Financing Payment Due</span>
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary" href="{{ route('loan-payment-dues.index') }}"> Back</a>
@@ -15,7 +15,7 @@
                     <div class="card-body">
                         
                         <div class="form-group">
-                            <strong>Loan Id:</strong>
+                            <strong>Financing Id:</strong>
                             {{ $loanPaymentDue->loan_id }}
                         </div>
                         <div class="form-group">

@@ -55,7 +55,7 @@
                         <tr>
                             <th>Inst.No</th>
                             <th>Principal</th>
-                            <th>Markup</th>
+                            <th>Profit</th>
                             <th>Total</th>
                             <th>Due Date</th>
                             <th>Payment Status</th>

@@ -1,12 +1,12 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Type')
+@section('page_title', 'Financing Type')
 @section('content')
 
 @section('content')
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">Update Loan Type</span>
+                        <span class="card-title">Update Financing Type</span>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('loan-types.update', $loanType->id) }}"  role="form" enctype="multipart/form-data">
