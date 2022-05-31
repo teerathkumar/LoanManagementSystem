@@ -31,11 +31,11 @@
                 </tr>
                 <tr class="datatable-header" style="text-align: center; ">
                     <th>Principle</th>
-                    <th>Markup</th>
+                    <th>Profit</th>
                     <th>Principle</th>
-                    <th>Markup</th>
+                    <th>Profit</th>
                     <th>Principle</th>
-                    <th>Markup</th>
+                    <th>Profit</th>
                 </tr>
             </thead>
             <tbody>

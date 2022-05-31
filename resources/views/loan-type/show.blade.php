@@ -1,11 +1,11 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Type')
+@section('page_title', 'Financing Type')
 
 @section('content')
                 <div class="card">
                     <div class="card-header">
                         <div class="float-left">
-                            <span class="card-title">Show Loan Type</span>
+                            <span class="card-title">Show Financing Type</span>
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary" href="{{ route('loan-types.index') }}"> Back</a>

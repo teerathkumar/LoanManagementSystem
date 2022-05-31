@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Status')
+@section('page_title', 'Financing Status')
 @section('content')
 
                 <div class="card">
@@ -7,7 +7,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Loan Status') }}
+                                {{ __('Financing Status') }}
                             </span>
 
                              <div class="float-right">

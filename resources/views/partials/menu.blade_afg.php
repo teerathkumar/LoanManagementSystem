@@ -108,7 +108,7 @@
                         </ul>
                     </li>
                     <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['tt.index', 'ttr.edit', 'ttr.show', 'ttr.manage']) ? 'nav-item-expanded nav-item-open' : '' }} ">
-                        <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Loans Management</span></a>
+                        <a href="#" class="nav-link"><i class="icon-graduation2"></i> <span> Financing Management</span></a>
 
                         <ul class="nav nav-group-sub" data-submenu-title="Manage Academics">
 
@@ -116,7 +116,7 @@
                             <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">Borrowers Management</a></li>
                             <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">Groups Management</a></li>
                             <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">Guarantors Management</a></li>
-                            <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">Loans Management</a></li>
+                            <li class="nav-item"><a href="{{ route('tt.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.index']) ? 'active' : '' }}">Financing Management</a></li>
                             
                         </ul>
                     </li>

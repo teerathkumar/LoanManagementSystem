@@ -8,7 +8,7 @@
         </div>
         <div class="form-group">
             {{ Form::label('loan_id') }}
-            {{ Form::text('loan_id', $loanPaymentRecovered->loan_id, ['class' => 'form-control' . ($errors->has('loan_id') ? ' is-invalid' : ''), 'placeholder' => 'Loan Id']) }}
+            {{ Form::text('loan_id', $loanPaymentRecovered->loan_id, ['class' => 'form-control' . ($errors->has('loan_id') ? ' is-invalid' : ''), 'placeholder' => 'Financing Id']) }}
             {!! $errors->first('loan_id', '<div class="invalid-feedback">:message</p>') !!}
         </div>
         <div class="form-group">

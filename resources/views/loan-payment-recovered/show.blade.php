@@ -1,11 +1,11 @@
 @extends('layouts.master')
-@section('page_title', 'Loan Payment Recovered')
+@section('page_title', 'Financing Payment Recovered')
 
 @section('content')
                 <div class="card">
                     <div class="card-header">
                         <div class="float-left">
-                            <span class="card-title">Show Loan Payment Recovered</span>
+                            <span class="card-title">Show Financing Payment Recovered</span>
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary" href="{{ route('loan-payment-recovereds.index') }}"> Back</a>
@@ -19,7 +19,7 @@
                             {{ $loanPaymentRecovered->due_id }}
                         </div>
                         <div class="form-group">
-                            <strong>Loan Id:</strong>
+                            <strong>Financing Id:</strong>
                             {{ $loanPaymentRecovered->loan_id }}
                         </div>
                         <div class="form-group">
