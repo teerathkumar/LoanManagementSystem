@@ -96,13 +96,14 @@
                             <li class="nav-item"><a href="{{ route('upload_aml') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['upload_aml']) ? 'active' : '' }}">Upload Sheet</a></li>                    
                         </ul>
                     </li>
-                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['kibor.all','tt.borrowers','tt.loandetails', 'ttr.edit', 'ttr.show', 'ttr.manage']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['kibor.all','kibor.history','takaful','tt.borrowers','tt.loandetails', 'ttr.edit', 'ttr.show', 'ttr.manage']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                         <a href="#" class="nav-link"><i class="icon-collaboration"></i> <span> Financing Management</span></a>
 
                         <ul class="nav nav-group-sub" data-submenu-title="Financing Management">
                         <li class="nav-item"><a href="{{ route('tt.borrowers') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.borrowers']) ? 'active' : '' }}">Borrowers</a></li>
                         <li class="nav-item"><a href="{{ route('kibor.all') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['kibor.all']) ? 'active' : '' }}">Kibor</a></li>
                         <li class="nav-item"><a href="{{ route('kibor.history') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['kibor.history']) ? 'active' : '' }}">Kibor History</a></li>
+                        <li class="nav-item"><a href="{{ route('takaful') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['takaful']) ? 'active' : '' }}">Takaful</a></li>
                         <li class="nav-item"><a href="{{ route('tt.loandetails') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['tt.loandetails']) ? 'active' : '' }}">Financing Details</a></li>
                         
                         </ul>
