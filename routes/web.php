@@ -165,7 +165,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('store', 'LoanKiborRateController@store')->name('loan-kibor-rates.store');
         });
         //Kibor Hisotry
-        Route::group(['prefix' => 'kibor'], function () {
+        Route::group(['prefix' => 'kiborhistory'], function () {
             Route::get('/', 'LoanKiborHistoryController@index');
             Route::get('index', 'LoanKiborHistoryController@index')->name('loan-kibor-histories.index');
             Route::get('create', 'LoanKiborHistoryController@create')->name('loan-kibor-histories.create');
@@ -175,10 +175,22 @@ Route::group(['middleware' => 'auth'], function () {
             Route::patch('update/{ttr}', 'LoanKiborHistoryController@update')->name('loan-kibor-histories.update');
             Route::post('store', 'LoanKiborHistoryController@store')->name('loan-kibor-histories.store');
         });
+        //takaful
+        Route::group(['prefix' => 'takaful'], function () {
+            Route::get('/', 'LoanTakafulController@index');
+            Route::get('index', 'LoanTakafulController@index')->name('loan-takafuls.index');
+            Route::get('create', 'LoanTakafulController@create')->name('loan-takafuls.create');
+            Route::delete('destroy/{ttr}', 'LoanTakafulController@destroy')->name('loan-takafuls.destroy');
+            Route::get('show', 'LoanTakafulController@show')->name('loan-takafuls.show');
+            Route::get('edit/{ttr}', 'LoanTakafulController@edit')->name('loan-takafuls.edit');
+            Route::patch('update/{ttr}', 'LoanTakafulController@update')->name('loan-takafuls.update');
+            Route::post('store', 'LoanTakafulController@store')->name('loan-takafuls.store');
+        });
         //Loans
         Route::get('/', 'LoansController@borrowers')->name('tt.borrowers');
         Route::get('/kibor', 'LoanKiborRateController@index')->name('kibor.all');
         Route::get('/kiborhistory', 'LoanKiborHistoryController@index')->name('kibor.history');
+        Route::get('/takaful', 'LoanTakafulController@index')->name('takaful');
         Route::get('/loandetails', 'LoansController@loandetails')->name('tt.loandetails');
         Route::get('/', 'LoansController@index')->name('tt.borrowers');
         Route::get('show_schedule/{ttr}', 'LoansController@show_schedule')->name('ttr.show_schedule');
