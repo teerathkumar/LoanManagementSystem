@@ -28,13 +28,30 @@
                         <div class="form-group row">
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Takaful Amount: </label>
-                                    <input name="takaful_amount" type="checkbox" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Takaful Amount">
+<!--                                    <input name="takaful_amount" type="checkbox" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Takaful Amount">-->
+                                        <select name="takaful_amount" class="col-md-9 form-control select-search">
+                                            <option value="">Please Select</option>
+                                            @foreach($takaful as $row)
+                                            <option value="{{ $row->id }}">{{ "Policy: ".$row->policy_number }}</option>
+                                            @endforeach
+                                        </select>
                             </div>
+                            <br>
+                            <div class="row col-md-12">
+                                    <label class="col-md-3 col-form-label font-weight-semibold">Kibor Rate:</label>
+                                    <select name="kibor_rate" class="col-md-9 col-form-label select-search">
+                                        <option value="">Please Select</option>
+                                        @foreach($kibor as $row)
+                                        <option value="{{ $row->id }}">{{ "KIBOR: ".$row->kibor_rate."% - SPREAD: ".$row->spread_rate."%" }}</option>
+                                        @endforeach
+                                    </select>
+                            </div>
+                            <br>
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">FED:</label>
                                     <input name="fed_amount" type="checkbox" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Takaful Amount">
                             </div>
-                            
+                            <br>
                             <!-- 
                             processing fees box, legal charges, valuation charges, income estimation charges, stamp paper charges.
                             -->
@@ -42,18 +59,24 @@
                                     <label class="col-md-3 col-form-label font-weight-semibold">Processing Fees:</label>
                                     <input name="processing_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >
                             </div>
+                            <br>
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Legal Charges:</label>
                                     <input name="legal_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >
                             </div>
+                            <br>
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Valuation Charges:</label>
                                     <input name="valuation_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >
                             </div>
+                            <br>
+                            <br>
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Income Estimation Charges:</label>
                                     <input name="inc_est_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >
                             </div>
+                            <br>
+                            <br>
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Stamp Paper Charges:</label>
                                     <input name="stamp_paper_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >

@@ -16,6 +16,7 @@ use App\Repositories\PaymentRepo;
 use App\Repositories\StudentRepo;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PDF;
 
@@ -30,9 +31,11 @@ class LoansController extends Controller {
         $this->clsPR = $PR;
     }
 
-    function showloan($loanId){
+    function showloan($loanId){        
         $d['data'] = \App\Models\LoanHistory::find($loanId)->with('loan_borrower')->first();
-        return view('lms_loans.showloan', $d);        
+        $d['due']=\App\Models\LoanPaymentDue::where(['loan_id'=>$loanId,'payment_status'=>0])->select(DB::raw("sum(amount_pr) as 'due_pr', sum(amount_mu) as 'due_mu'"))->first();
+        $d['paid']= \App\Models\LoanPaymentRecovered::where(['loan_id'=>$loanId])->select(DB::raw("sum(amount_pr) as 'paid_pr', sum(amount_mu) as 'paid_mu'"))->first();
+        return view('lms_loans.showloan', $d);
     }
     function Index() {
         $d['tt_records'] = $this->tt->getAll();
@@ -63,27 +66,20 @@ class LoansController extends Controller {
         return view('lms_loans.loanschedule', $d);
     }
 
-    public function getStatus($param, $title) {
+    public function getStatus($param) {
         $LoanStatus = "";
+        $title = \App\Models\LoanStatus::find($param)->title;
         
-        switch ($param){
-            case 1:
-                $LoanStatus = '<span class="badge badge-pill badge-success">'.$title.'</span>';
-                break;
-            case 2:
-                $LoanStatus = '<span class="badge badge-pill badge-primary">'.$title.'</span>';
-                break;
-            case 3:
-                $LoanStatus = '<span class="badge badge-pill badge-danger">'.$title.'</span>';
-                break;
-                case 4:
-                    $LoanStatus = '<span class="badge badge-pill badge-notice">'.$title.'</span>';
-                    break;
-            }
+        $class = [1=>"primary",2=>"success",3=>"danger",4=>"danger",5=>"notice", 6=>"warning", 7=>"primary", 8=>"primary", 
+            9=>"primary", 10=>"success"];
+        $LoanStatus = '<span class="badge badge-pill badge-'.($class[$param]).'">'.$title.'</span>';
+        
         return $LoanStatus;
     }
     public function loanstep($loan_id) {
         $d['loaninfo'] = \App\Models\LoanHistory::where(['id' => $loan_id])->first();
+        $d['kibor']= \App\Models\LoanKiborRate::get();
+        $d['takaful']= \App\Models\LoanTakaful::get();
         
         return view('lms_loans.loanstep', $d);        
         

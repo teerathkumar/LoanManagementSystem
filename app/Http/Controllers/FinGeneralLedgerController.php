@@ -109,7 +109,9 @@ class FinGeneralLedgerController extends Controller
      */
     public function show($id)
     {
+        dd($id);
         $finGeneralLedger = FinGeneralLedger::find($id);
+        dd($finGeneralLedger);
 
         return view('fin-general-ledger.show', compact('finGeneralLedger'));
     }

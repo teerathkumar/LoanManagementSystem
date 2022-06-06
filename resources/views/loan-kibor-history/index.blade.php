@@ -31,6 +31,7 @@
                                         <th>No</th>
                                         
 										<th>Loan Id</th>
+										<th>Kibor Rate Id</th>
 										<th>Start Date</th>
 										<th>End Date</th>
 										<th>Status</th>
@@ -45,6 +46,7 @@
                                             <td>{{ ++$i }}</td>
                                             
 											<td>{{ $loanKiborHistory->loan_id }}</td>
+											<td>{{ $loanKiborHistory->kibor_rate_id }}</td>
 											<td>{{ $loanKiborHistory->start_date }}</td>
 											<td>{{ $loanKiborHistory->end_date }}</td>
 											<td>{{ $loanKiborHistory->status }}</td>

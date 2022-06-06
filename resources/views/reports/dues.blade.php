@@ -24,18 +24,18 @@
                     <th rowspan="2">Borrower Name</th>
                     <th rowspan="2">Location</th>
                     <th rowspan="2">A/C#</th>
-                    <th colspan="2">Current Due</th>
-                    <th colspan="2">Total Due</th>
-                    <th colspan="2">Total Recovered</th>
+                    <th colspan="2" style="text-align: center; border-width: 0px 1px 0px 1px;">Current Due</th>
+                    <th colspan="2" style="text-align: center; border-width: 0px 1px 0px 1px;">Total Due</th>
+                    <th colspan="2" style="text-align: center; border-width: 0px 1px 0px 1px;">Total Recovered</th>
 <!--                    <th rowspan="2">Last Recovery Date</th>-->
                 </tr>
                 <tr class="datatable-header" style="text-align: center; ">
-                    <th>Principle</th>
-                    <th>Profit</th>
-                    <th>Principle</th>
-                    <th>Profit</th>
-                    <th>Principle</th>
-                    <th>Profit</th>
+                    <th style="border-width: 1px 0px 0px 1px; border-style: solid;">Principle</th>
+                    <th style="border-width: 1px 1px 0px 0px; border-style: solid;">Profit</th>
+                    <th style="border-width: 1px 0px 0px 1px; border-style: solid;">Principle</th>
+                    <th style="border-width: 1px 1px 0px 0px; border-style: solid;">Profit</th>
+                    <th style="border-width: 1px 0px 0px 1px; border-style: solid;">Principle</th>
+                    <th style="border-width: 1px 1px 0px 0px; border-style: solid;">Profit</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,52 +54,8 @@
 <!--                    <td>{{ $ReportRow->b_name }}</td>-->
 
                 </tr>                
-                <tr  class="border-blue">
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $ReportRow->b_name }}</td>
-                    <td>{{ $ReportRow->name }}</td>
-                    <td>{{ $ReportRow->id }}</td>
-                    <td>{{ number_format($ReportRow->c_am_pr) }}</td>
-                    <td>{{ number_format($ReportRow->c_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_pr) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ $ReportRow->b_name }}</td>
-
-                </tr>                
-                <tr  class="border-blue">
-                    <td>{{ ++$i }}</td>
-                    <td>{{ $ReportRow->b_name }}</td>
-                    <td>{{ $ReportRow->name }}</td>
-                    <td>{{ $ReportRow->id }}</td>
-                    <td>{{ number_format($ReportRow->c_am_pr) }}</td>
-                    <td>{{ number_format($ReportRow->c_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_pr) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ number_format($ReportRow->s_am_mu) }}</td>
-                    <td>{{ $ReportRow->b_name }}</td>
-
-                </tr>                
                 @endforeach
             </tbody>
-            <tfoot class="datatable-footer-accent">
-                <tr  class="border-blue">
-                    <th>{{ $i }}</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th>1234</th>
-                    <th>1234</th>
-                    <th>1234</th>
-                    <th>1234</th>
-                    <th>1234</th>
-                    <th>1234</th>
-                    <th></th>
-                </tr>                
-                
-            </tfoot>
         </table>
 
 

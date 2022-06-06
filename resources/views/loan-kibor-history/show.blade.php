@@ -19,6 +19,10 @@
                             {{ $loanKiborHistory->loan_id }}
                         </div>
                         <div class="form-group">
+                            <strong>Kibor Rate Id:</strong>
+                            {{ $loanKiborHistory->kibor_rate_id }}
+                        </div>
+                        <div class="form-group">
                             <strong>Start Date:</strong>
                             {{ $loanKiborHistory->start_date }}
                         </div>

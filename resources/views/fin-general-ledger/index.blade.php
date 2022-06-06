@@ -51,7 +51,7 @@
                                             <td>{{ $finGeneralLedger->officeinfo->name }}</td>
                                             <td>
                                                 <form action="{{ route('fin-general-ledgers.destroy',$finGeneralLedger->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('fin-general-ledgers.show',$finGeneralLedger->id) }}"><i class="fa fa-fw fa-eye"></i> Show</a>
+                                                    <a class="btn btn-sm btn-primary " href="{{ route('fin-general-ledgers.show', ['id' => $finGeneralLedger->id]) }}"><i class="fa fa-fw fa-eye"></i> Show</a>
                                                     <a class="btn btn-sm btn-success" href="{{ route('fin-general-ledgers.edit',$finGeneralLedger->id) }}"><i class="fa fa-fw fa-edit"></i> Edit</a>
                                                     @csrf
                                                     @method('DELETE')

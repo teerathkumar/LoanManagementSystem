@@ -90,7 +90,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('index', 'FinGeneralLedgerController@index')->name('fin-general-ledgers.index');
             Route::get('create', 'FinGeneralLedgerController@create')->name('fin-general-ledgers.create');
             Route::delete('destroy/{ttr}', 'FinGeneralLedger@destroy')->name('fin-general-ledgers.destroy');
-            Route::get('show', 'FinGeneralLedgerController@show')->name('fin-general-ledgers.show');
+            Route::get('/show/{id}', 'FinGeneralLedgerController@show')->name('fin-general-ledgers.show');
             Route::get('edit/{ttr}', 'FinGeneralLedgerController@edit')->name('fin-general-ledgers.edit');
             Route::patch('update/{ttr}', 'FinGeneralLedgerController@update')->name('fin-general-ledgers.update');
             Route::post('store', 'FinGeneralLedgerController@store')->name('fin-general-ledgers.store');
