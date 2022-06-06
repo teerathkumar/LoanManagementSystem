@@ -40,7 +40,7 @@
                             <td>{{ number_format($mc->total_amount_pr,0) }}</td>
                             <td>{{ number_format($mc->total_amount_mu,0) }}</td>
                             <td>{{ date("d M Y",strtotime($mc->disb_date)) }}</td>
-                            <td><?php echo app('App\Http\Controllers\LoansController')->getStatus($mc->loan_status_id, $mc->loan_status->title) ?></td>
+                            <td><?php echo app('App\Http\Controllers\LoansController')->getStatus($mc->loan_status_id) ?></td>
                             <td class="text-center">
                                 
                                 <div class="list-icons">

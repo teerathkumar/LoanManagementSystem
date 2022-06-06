@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property $id
  * @property $loan_id
+ * @property $kibor_rate_id
  * @property $start_date
  * @property $end_date
  * @property $status
@@ -31,7 +32,7 @@ class LoanKiborHistory extends Model
      *
      * @var array
      */
-    protected $fillable = ['loan_id','start_date','end_date','status'];
+    protected $fillable = ['loan_id','kibor_rate_id','start_date','end_date','status'];
 
 
 
