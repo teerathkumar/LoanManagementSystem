@@ -52,6 +52,81 @@ class LoanPaymentRecoveredController extends Controller {
         return view('loan-payment-recovered.pay', compact('loanPaymentRecovered'))->with(['loanId' => $loanId, 'TotalAmountDue' => $TotalAmountDue, 'DDLList' => $DDLList, 'AmountInstallment' => $AmountInstallment]);
     }
 
+    public function partialPayment($loanId){
+        $LoansInfo = \App\Models\LoanHistory::where('id',$loanId)->first();
+        
+        $OutstandingData = \App\Models\LoanPaymentDue::where(['loan_id'=>$loanId,'payment_status'=>1])->orderBy('id','desc')->first();
+        if(!$OutstandingData){
+            $OutstandingData = \App\Models\LoanPaymentDue::where(['loan_id'=>$loanId,'payment_status'=>0])->first();
+            $outstanding = $LoansInfo->total_amount_pr;
+        } else {
+            $outstanding = $OutstandingData->outstanding;
+        }
+        $partialPercentage = 15/100;
+    }
+    public function pay_ealrysettlement($loanId){
+        $LoansInfo = \App\Models\LoanHistory::where('id',$loanId)->first();
+        
+        $OutstandingData = \App\Models\LoanPaymentDue::where(['loan_id'=>$loanId,'payment_status'=>1])->orderBy('id','desc')->first();
+        if(!$OutstandingData){
+            $OutstandingData = \App\Models\LoanPaymentDue::where(['loan_id'=>$loanId,'payment_status'=>0])->first();
+            $outstanding = $LoansInfo->total_amount_pr;
+        } else {
+            $outstanding = $OutstandingData->outstanding;
+        }
+        
+        if($OutstandingData){
+            $due_date = $OutstandingData->due_date;
+            $installment_no = $OutstandingData->installment_no;
+            //$outstanding = $OutstandingData->outstanding;
+            if($installment_no<=12){
+                $charges=4.5;
+            } else if($installment_no<=24){
+                $charges=3;
+            } else if($installment_no<=36){
+                $charges=1.5;
+            } else {
+                $charges=0;
+            }
+            $now = time(); // or your date as well
+            $your_date = strtotime($due_date);
+            $datediff = $now - $your_date;
+            if($datediff<0){
+                $datediff=$datediff*-1;
+            }
+            
+
+            $days_diff= round($datediff / (60 * 60 * 24));            
+            $days_diff=14;
+            echo "Settlement Outstanding: ".$outstanding."<br>";
+            $Profit = $outstanding*(($LoansInfo->kibor_rate+$LoansInfo->spread_rate)/100)/360*$days_diff;
+            echo "Profit for ".$days_diff." days: ".($Profit)."<br>";
+            $SettlementCharges = $outstanding*($charges/100);
+            echo "Settlement Charges: ".($SettlementCharges)."<br>";
+            $FED = $SettlementCharges*(13/100);
+            echo "FED on Settlement Charges: ".($FED)."<br>";
+            $TotalSettlement = $outstanding+$Profit+$SettlementCharges+$FED;
+            echo "Total Settlement Amount: ".($TotalSettlement)."<br>";
+        }
+        /*
+1st Year	4.50%
+2nd Year	3%
+3rd Year	1.50%
+4th Year onwards	0%
+Pay off date	01-Mar-23
+
+         */
+        /*
+Settlement Amount		
+Outstanding Principal	 9,957,847 	
+Profit for 14 days (Feb 16 - Marc 1)	 65,832 	
+Settlement Charges	 448,103 	(because of 1st year)
+FED on Settlement Charges	 58,253 	
+Total Settlement Amount	 10,530,036 	
+
+         */
+        
+    }
     public function index() {
         $loanPaymentRecovereds = LoanPaymentRecovered::get();
 

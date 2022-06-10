@@ -26,35 +26,30 @@
                         @csrf
                         <input type="hidden" name="loanId" value="{{$loaninfo->id}}" />
                         <div class="form-group row">
-                            <div class="row col-md-12">
-                                    <label class="col-md-3 col-form-label font-weight-semibold">Takaful Amount: </label>
-<!--                                    <input name="takaful_amount" type="checkbox" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Takaful Amount">-->
-                                        <select name="takaful_amount" class="col-md-9 form-control select-search">
-                                            <option value="">Please Select</option>
-                                            @foreach($takaful as $row)
-                                            <option value="{{ $row->id }}">{{ "Policy: ".$row->policy_number }}</option>
-                                            @endforeach
-                                        </select>
-                            </div>
                             <br>
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Kibor Rate:</label>
                                     <select name="kibor_rate" class="col-md-9 col-form-label select-search">
-                                        <option value="">Please Select</option>
                                         @foreach($kibor as $row)
-                                        <option value="{{ $row->id }}">{{ "KIBOR: ".$row->kibor_rate."% - SPREAD: ".$row->spread_rate."%" }}</option>
+                                        <option value="{{ $row->kibor_rate }}">{{ "KIBOR: ".$row->kibor_rate."%" }}</option>
                                         @endforeach
                                     </select>
                             </div>
                             <br>
                             <div class="row col-md-12">
+                                    <label class="col-md-3 col-form-label font-weight-semibold">Spread (Percentage):</label>
+                                    <input name="spread_rate" type="number" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Spread Rate">
+                            </div>
+                            <div class="row col-md-12">
+                                    <label class="col-md-3 col-form-label font-weight-semibold">Takaful:</label>
+                                    <input name="takaful" type="checkbox" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Takaful Amount">
+                            </div>
+                            <!--
+                            <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">FED:</label>
                                     <input name="fed_amount" type="checkbox" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Takaful Amount">
                             </div>
                             <br>
-                            <!-- 
-                            processing fees box, legal charges, valuation charges, income estimation charges, stamp paper charges.
-                            -->
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Processing Fees:</label>
                                     <input name="processing_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >
@@ -80,7 +75,7 @@
                             <div class="row col-md-12">
                                     <label class="col-md-3 col-form-label font-weight-semibold">Stamp Paper Charges:</label>
                                     <input name="stamp_paper_amount" type="text" class="col-md-9 form-control  col-form-label font-weight-semibold" >
-                            </div>
+                            </div>-->
                         </div>
                         <div class="form-group row">
                             <button type="submit" class="btn btn-success float-right" >Save and Generate</button>

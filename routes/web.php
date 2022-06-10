@@ -200,6 +200,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('storestep', 'LoansController@loanstepStore')->name('storestep');
 
         Route::get('pay_installment/{ttr}', 'LoanPaymentRecoveredController@pay_installment')->name('loans.pay');
+        Route::get('early_settlement/{ttr}', 'LoanPaymentRecoveredController@pay_ealrysettlement')->name('loans.early');
+        Route::get('takaful/{ttr}', 'LoansController@takafulreport')->name('loans.takaful');
     });
     //Payments
     Route::group(['prefix' => 'payment'], function () {

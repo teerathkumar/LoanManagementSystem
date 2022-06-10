@@ -30,6 +30,8 @@
                                     <tr>
                                         <th>No</th>
                                         
+										<th>Account Number</th>
+										<th>Type</th>
 										<th>Start Date</th>
 										<th>End Date</th>
 										<th>Policy Number</th>
@@ -44,6 +46,8 @@
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             
+											<td>{{ $loanTakaful->loan_id }}</td>
+											<td>{{ $loanTakaful->type==0 ? "Property" : "Life" }}</td>
 											<td>{{ $loanTakaful->start_date }}</td>
 											<td>{{ $loanTakaful->end_date }}</td>
 											<td>{{ $loanTakaful->policy_number }}</td>
