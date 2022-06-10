@@ -49,6 +49,8 @@
         </div>
         <div class="col-md-8">
             <div class="p-3 py-5">
+                
+                
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="text-right">Borrower Profile</h4>
                 </div>
@@ -96,6 +98,14 @@
                     <div class="col-md-6"><label class="labels">Total Paid Principle:</label><p ><strong>{{number_format($paid->paid_pr,0)}}</strong></p></div>                                    
                     <div class="col-md-6"><label class="labels">Total Paid Profit:</label><p ><strong>{{number_format($paid->paid_mu,0)}}</strong></p></div>                                    
                 </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    
+                    <div class="mt-5 text-center"><button class="btn btn-primary " type="button">Show EMI Schedule</button></div>
+                    <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Show EMI Schedule</button></div>
+                    <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Show EMI Schedule</button></div>
+                </div>
+                
 <!--
                 <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>-->
             </div>

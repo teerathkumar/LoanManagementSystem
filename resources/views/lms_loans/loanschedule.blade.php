@@ -61,12 +61,13 @@
                     </thead>
                     <tbody>
                         @foreach($dueinfo as $mc)
+                        
                         <tr>
                             <td>{{ $mc->installment_no }}</td>
                             <td>{{ date("d M Y",strtotime($mc->due_date)) }}</td>
                             <td>{{ number_format($mc->amount_pr,2) }}</td>
                             <td>{{ number_format($mc->amount_mu,2) }}</td>
-                            <td>{{ number_format($mc->amount_total,2) }}</td>
+                            <td>{{ ($loaninfo->total_amount-=$mc->amount_total) ? number_format($loaninfo->total_amount,0) : 0 }}</td>
                             
 <!--                            <td>{{ $mc->payment_status==1 ? "Paid" : "Unpaid" }}</td>-->
                             <td><?php echo $mc->payment_status ? '<span class="badge badge-pill badge-success">&nbsp;&nbsp;&nbsp;&nbsp;PAID&nbsp;&nbsp;&nbsp;&nbsp;</span>' : '<span class="badge badge-pill badge-danger">UN-PAID</span>' ?></td>

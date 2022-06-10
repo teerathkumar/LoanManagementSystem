@@ -55,7 +55,9 @@
                                             <a href="{{ route('ttr.show_schedule', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> View Schedule</a>
                                             <a href="{{ route('ttr.loanstep', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> Generate Schedule</a>
                                             <a href="{{ route('loans.pay', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Pay Installment</a>
-                                            <a data-target="#exampleModalLong" data-toggle="modal"  class="dropdown-item"><i class="icon-cash"></i> Pay</a>
+                                            <a href="{{ route('loans.early', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Early Settlement</a>
+                                            <a href="{{ route('loans.takaful', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Show Takaful</a>
+                                            
 
                                             @if(Qs::userIsTeamSA())
                                             {{--Manage--}}

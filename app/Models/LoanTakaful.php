@@ -31,7 +31,7 @@ class LoanTakaful extends Model
      *
      * @var array
      */
-    protected $fillable = ['start_date','end_date','policy_number','renewal_date'];
+    protected $fillable = ['loan_id','start_date','type','covered_amount', 'end_date','policy_number','renewal_date'];
 
 
 
