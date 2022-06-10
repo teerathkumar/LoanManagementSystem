@@ -55,7 +55,7 @@
                             <th>Due Date</th>
                             <th>Principal</th>
                             <th>Profit</th>
-                            <th>Total</th>
+                            <th>Installment Amount</th>
                             <th>Outstanding Principle</th>
                             <th>Payment Status</th>
                         </tr>
@@ -66,9 +66,9 @@
                         <tr>
                             <td>{{ $mc->installment_no }}</td>
                             <td>{{ date("d M Y",strtotime($mc->due_date)) }}</td>
-                            <td>{{ number_format($mc->amount_pr,2) }}</td>
-                            <td>{{ number_format($mc->amount_mu,2) }}</td>
-                            <td>{{ number_format($mc->amount_total,2) }}</td>
+                            <td>{{ number_format($mc->amount_pr,0) }}</td>
+                            <td>{{ number_format($mc->amount_mu,0) }}</td>
+                            <td>{{ number_format($mc->amount_total,0) }}</td>
                             <td>{{ number_format($mc->outstanding) }}</td>
                             
 <!--                            <td>{{ $mc->payment_status==1 ? "Paid" : "Unpaid" }}</td>-->
