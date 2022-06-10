@@ -31,7 +31,7 @@
                             <td>{{ $mc->due_id }}</td>
                             <td align="right">{{ number_format($mc->amount_pr) }}</td>
                             <td align="right">{{ number_format($mc->amount_mu) }}</td>
-                            <td align="right">{{  number_format(($mc->loan_history->total_amount_pr-$mc->amount_pr)) }}</td>
+                            <td align="right">{{  number_format(($mc->amount_total)) }}</td>
                             <td>{{ date("d M Y",strtotime($mc->recovered_date)) }}</td>
                         </tr>
                         @endforeach
