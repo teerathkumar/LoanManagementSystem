@@ -56,7 +56,9 @@
                                             <a href="{{ route('ttr.loanstep', $mc->id) }}" class="dropdown-item"><i class="icon-eye"></i> Generate Schedule</a>
                                             <a href="{{ route('loans.pay', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Pay Installment</a>
                                             <a href="{{ route('loans.early', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Early Settlement</a>
+                                            <a href="{{ route('loans.partial', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Partial Payment</a>
                                             <a href="{{ route('loans.takaful', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Show Takaful</a>
+                                            <a href="{{ route('loans.taxcertificate', $mc->id) }}" class="dropdown-item"><i class="icon-cash"></i> Tax Certificate</a>
                                             
 
                                             @if(Qs::userIsTeamSA())

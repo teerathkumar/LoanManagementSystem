@@ -50,6 +50,40 @@ class LoansController extends Controller {
         return view('lms_loans.borrowers', $d);
     }
 
+    function taxcertificate($loanId) {
+        $d['loanId'] = $loanId;
+        
+        $d['recovered']= \App\Models\LoanPaymentRecovered::where('loan_id', $loanId)->select(DB::raw('sum(amount_mu) as profit'))->first();
+        
+        $d['dueData'] = \App\Models\LoanPaymentDue::where(['loan_id'=>$loanId,'payment_status'=>1])->get();
+        $outstanding = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'payment_status' => 1])->orderBy('id', 'desc')->first();
+        if ($outstanding) {
+            $outstanding = $outstanding->outstanding;
+        } else {
+            $outstanding = \App\Models\LoanHistory::where('id', $loanId)->first()->total_amount_pr;
+        }
+        
+        
+
+        $loanData = \App\Models\LoanHistory::select(
+                        'loan_borrowers.cnic as cnic',
+                        DB::raw('concat(loan_borrowers.fname," ",loan_borrowers.lname) as name'),
+                        'loan_history.id as loan_id',
+                        'loan_history.disb_date as disb_date',
+                        'loan_history.total_amount_pr as finance_amount',
+                        'loan_status.title as loan_status');
+        
+        $loanData = $loanData
+                ->join('loan_borrowers', 'loan_borrowers.id', '=', 'loan_history.borrower_id')
+                ->join('loan_status', 'loan_status.id', '=', 'loan_history.loan_status_id')
+                ->where('loan_history.id', $loanId)
+                ->first();
+
+        $d['loanData'] = $loanData;
+        $d['loanData']['outstanding']=$outstanding;
+        return view('lms_loans.taxcert', $d);
+    }
+
     function loandetails() {
         $tt = new LoanHistoryRepo;
         $d['tt_records'] = $tt->getAll();
@@ -61,7 +95,7 @@ class LoansController extends Controller {
     function show_schedule($tt_id) {
         //dd(__FUNCTION__);
         $d['ttr_id'] = $tt_id;
-        
+
         $d['loaninfo'] = \App\Models\LoanHistory::where(['id' => $tt_id])->first();
         $d['dueinfo'] = \App\Models\LoanPaymentDue::where(['loan_id' => $tt_id])->with('loan_history')->get();
         $d['paidinfo'] = \App\Models\LoanPaymentRecovered::where(['loan_id' => $tt_id])->get();
@@ -97,23 +131,24 @@ class LoansController extends Controller {
         //return view('lms_loans.loanstep', $d);        
     }
 
-    public function takafulreport($loanId){
+    public function takafulreport($loanId) {
         $takaful = \App\Models\LoanTakaful::where('loan_id', $loanId)->get();
         $property = array();
         $life = array();
-        if($takaful){
-            foreach($takaful as $row){
-                if($row->type==0){
-                    $d['property'][]=$row;
+        if ($takaful) {
+            foreach ($takaful as $row) {
+                if ($row->type == 0) {
+                    $d['property'][] = $row;
                 } else {
-                    $d['life'][]=$row;
+                    $d['life'][] = $row;
                 }
             }
         }
-        $d['i']=1;
-        $d['j']=1;
-        return view('lms_loans.takaful', $d);      
+        $d['i'] = 1;
+        $d['j'] = 1;
+        return view('lms_loans.takaful', $d);
     }
+
     public function gen_schedule($loan_id, $fetchdata) {
         //$data = $req->all();
         //$this->tt->create($data);
@@ -136,7 +171,6 @@ class LoansController extends Controller {
 
         //return Qs::jsonUpdateOk();
     }
-
 
     function GenerateRepaymentScheduleDecline($LoanId, $fetchdata) {
 //        
@@ -170,6 +204,7 @@ class LoansController extends Controller {
         if ($disb_day >= 26 && $disb_day <= 1) {
             $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-01";
         }
+//        echo $disb_date."<br>" ;
 //        echo $rep_start_date ;die;
         $loan_freq = $data['loan_frequency'];
         $markup_rate = $data['markup_rate'];
@@ -178,7 +213,7 @@ class LoansController extends Controller {
         $ChequeDate = $disb_date;
         $ApprovedLoanAmount = $amount_pr;
         $SrChargeRate = $markup_rate;
-        $SrChargeRate = $kibor_rate+$spread_rate;
+        $SrChargeRate = $kibor_rate + $spread_rate;
         $LoanFrequency = $loan_freq;
         $LoanTerm = $loan_period;
         $RepStartDate = $rep_start_date;
@@ -189,10 +224,10 @@ class LoansController extends Controller {
             return 0;
         }
         $DayRepStart = date("d", strtotime($RepStartDate));
-        if ($DayRepStart < 15 || $DayRepStart > 25) {
-            $DayRepStart = 15;
-            $RepStartDate = date("Y-m", strtotime($RepStartDate)) . "-" . $DayRepStart;
-        }
+        //if ($DayRepStart < 15 || $DayRepStart > 25) {
+        //  $DayRepStart = 15;
+        $RepStartDate = date("Y-m", strtotime($RepStartDate)) . "-" . $DayRepStart;
+        //}
 
         $GrandPrinc = $GrandServ = $GrandTotal = $GrandDays = $GrandTakaful = 0;
 
@@ -247,7 +282,7 @@ class LoansController extends Controller {
                 ((pow(1 + $rate, $nper) - 1) / $rate)) * -1;
 
         $rate = 16;
-        $rate = $kibor_rate+$spread_rate;
+        $rate = $kibor_rate + $spread_rate;
         //echo $this->calPMT($rate, 7, $ApprovedLoanAmount);
         //dd();        
         //dd(round($PMT,6));
@@ -280,38 +315,38 @@ class LoansController extends Controller {
                 $difference = $datetime_chq->diff($datetime_repstart);
                 //
 
-/*
-                $TotalDifference = 0;
-                $Dev_ScheduleDate_R = $Dev_ScheduleDate;
-                for ($raja = 1; $raja <= ($SchedLoanTerm / $LoanFrequency); $raja++) {
-                    if ($raja == 1) {
-                        $TotalDifference += $difference->days;
-                    } else {
-                        $PreviousRepaymentDate = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate_R)));
-                        $date_R = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate_R)));
-                        $date_R->modify('+' . $LoanFrequency . ' month');
-                        $Dev_ScheduleDate_R = $date_R->format('Y-m-d');
-                        $NextRepaymentDate_R = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate_R)));
-                        $difference_R = $PreviousRepaymentDate->diff($NextRepaymentDate_R);
-                        $TotalDifference += $difference_R->days;
-                    }
-                }
-                //echo "Total Days Diff: " . $TotalDifference . "<br>";
-                if ($TotalDifference > $TotalDaysLoanTerms) {
-                    //echo "1<br>";
-                    //echo "DailySrcCharge: " . $DailySrcCharge . "<br>";
+                /*
+                  $TotalDifference = 0;
+                  $Dev_ScheduleDate_R = $Dev_ScheduleDate;
+                  for ($raja = 1; $raja <= ($SchedLoanTerm / $LoanFrequency); $raja++) {
+                  if ($raja == 1) {
+                  $TotalDifference += $difference->days;
+                  } else {
+                  $PreviousRepaymentDate = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate_R)));
+                  $date_R = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate_R)));
+                  $date_R->modify('+' . $LoanFrequency . ' month');
+                  $Dev_ScheduleDate_R = $date_R->format('Y-m-d');
+                  $NextRepaymentDate_R = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate_R)));
+                  $difference_R = $PreviousRepaymentDate->diff($NextRepaymentDate_R);
+                  $TotalDifference += $difference_R->days;
+                  }
+                  }
+                  //echo "Total Days Diff: " . $TotalDifference . "<br>";
+                  if ($TotalDifference > $TotalDaysLoanTerms) {
+                  //echo "1<br>";
+                  //echo "DailySrcCharge: " . $DailySrcCharge . "<br>";
 
-                    $RemainingDays = $TotalDifference - $TotalDaysLoanTerms;
-                    //echo "RemainingDays: " . $RemainingDays . "<br>";
-                    $AdditionalServiceCharges += ($DailySrcCharge * $RemainingDays);
-                } else if ($TotalDifference < $TotalDaysLoanTerms && $iLoanFrequency != 4) {
-                    //echo "2<br>";
-                    $RemainingDays = $TotalDaysLoanTerms - $TotalDifference;
-                    $AdditionalServiceCharges -= ($DailySrcCharge * $RemainingDays);
-                }
-                //echo "AdditionalServiceCharges: " . $AdditionalServiceCharges . "<br>";
- * 
- */
+                  $RemainingDays = $TotalDifference - $TotalDaysLoanTerms;
+                  //echo "RemainingDays: " . $RemainingDays . "<br>";
+                  $AdditionalServiceCharges += ($DailySrcCharge * $RemainingDays);
+                  } else if ($TotalDifference < $TotalDaysLoanTerms && $iLoanFrequency != 4) {
+                  //echo "2<br>";
+                  $RemainingDays = $TotalDaysLoanTerms - $TotalDifference;
+                  $AdditionalServiceCharges -= ($DailySrcCharge * $RemainingDays);
+                  }
+                  //echo "AdditionalServiceCharges: " . $AdditionalServiceCharges . "<br>";
+                 * 
+                 */
             } else {
                 $PreviousRepaymentDate = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate)));
                 $date = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate)));
@@ -329,16 +364,14 @@ class LoansController extends Controller {
 
             $MonthlyServiceCharge += $AdditionalServiceCharges;
 
-            $ApprovedLoanAmount -= $MonthlyPrinciple;
-
             if ($takaful_amount) {
                 //echo $LoanTerm."/".$i."<br>";
-                $lastTakaful = \App\Models\LoanTakaful::where(['loan_id'=>$LoanId, 'type'=>0])->orderBy('id','desc')->first();
-                $lastTakafulLife = \App\Models\LoanTakaful::where(['loan_id'=>$LoanId, 'type'=>1])->orderBy('id','desc')->first();
-                if ($i==1 || $i%12 == 0) {
-                    $startDate=$Dev_ScheduleDate;
-                        $endDate=date('Y-m-d', strtotime($Dev_ScheduleDate."+11 month "));
-                        $renewalDate=date("Y-m-d",strtotime($endDate."+1 day"));
+                $lastTakaful = \App\Models\LoanTakaful::where(['loan_id' => $LoanId, 'type' => 0])->orderBy('id', 'desc')->first();
+                $lastTakafulLife = \App\Models\LoanTakaful::where(['loan_id' => $LoanId, 'type' => 1])->orderBy('id', 'desc')->first();
+                if (( $i == 1 || $i % 13 == 0) && $ApprovedLoanAmount >= 500) {
+                    $startDate = $Dev_ScheduleDate;
+                    $endDate = date('Y-m-d', strtotime($Dev_ScheduleDate . "+11 month "));
+                    $renewalDate = date("Y-m-d", strtotime($endDate . "+1 day"));
                     $property_array = [
                         'loan_id' => $LoanId,
                         'type' => '0',
@@ -350,7 +383,7 @@ class LoansController extends Controller {
 //                    print_r($property_array);
 //                    echo "<br>";
                     \App\Models\LoanTakaful::create($property_array);
-                    $life_array=[
+                    $life_array = [
                         'loan_id' => $LoanId,
                         'type' => '1',
                         'covered_amount' => $ApprovedLoanAmount,
@@ -361,6 +394,7 @@ class LoansController extends Controller {
                     \App\Models\LoanTakaful::create($life_array);
                 }
             }
+            $ApprovedLoanAmount -= $MonthlyPrinciple;
 
             $DaysDiff = $difference->days;
 
@@ -392,9 +426,9 @@ class LoansController extends Controller {
             if ($sScheduledDay == "Sun") {
                 $dateScheduledRepaymentDate = new DateTime(date("Y-m-d", strtotime($sScheduledRepaymentDate)));
                 if ($sScheduledDate == 25) {
-                    $dateScheduledRepaymentDate->modify('-1 day');
+                    //$dateScheduledRepaymentDate->modify('-1 day');
                 } else {
-                    $dateScheduledRepaymentDate->modify('+1 day');
+                    //$dateScheduledRepaymentDate->modify('+1 day');
                 }
                 $sScheduledRepaymentDate = $dateScheduledRepaymentDate->format('Y-m-d');
                 $sScheduledRepaymentDate = date("M j, Y", strtotime($sScheduledRepaymentDate));
@@ -435,10 +469,9 @@ class LoansController extends Controller {
                     'kibor_rate' => $kibor_rate,
                     'spread_rate' => $spread_rate,
                     'takaful' => $takaful_amount,
-                    'total_amount' => $GrandTotal, 
-                    'total_amount_pr' => $GrandPrinc, 
+                    'total_amount' => $GrandTotal,
+                    'total_amount_pr' => $GrandPrinc,
                     'total_amount_mu' => $GrandServ
-                    
         ]);
 
         $LastSeries = \App\Models\FinGeneralLedger::orderBy("id", "desc")->first();
@@ -457,7 +490,6 @@ class LoansController extends Controller {
         }
         $TakafulFees = $GrandPrinc * 0.8 / 100;
         $BankPayment = $GrandPrinc - ($ProcessingFees + $TakafulFees);
-
 
 //        Loan Processing fee income and FED payable
         //First Entry ()

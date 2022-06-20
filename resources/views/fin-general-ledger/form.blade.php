@@ -8,7 +8,7 @@
 
         <div class="row">
             <div class="col-md-4">
-                <input type="hidden" name="reference" value="{{$Reference}}" />
+<!--                <input type="hidden" name="reference" value="{{$Reference}}" />-->
                 <select name="reference" id="reference" class="form-control select-search">
                     <option value="">Select Payment Type</option>
                     <option value="1">BPV</option>
@@ -46,7 +46,8 @@
         <hr>
         <div class="row" style="font-size: 18px; font-weight: bold;">
             <div class="col-md-1">S#</div>
-            <div class="col-md-7">Account</div>
+            <div class="col-md-4">Account</div>
+            <div class="col-md-3">Description</div>
             <div class="col-md-2">Debit</div>
             <div class="col-md-2">Credit</div>
 
@@ -58,13 +59,16 @@
                 <div class="col-md-1">
                     {{$i}}
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-4">
                     <select name="chartofaccount[]" id="chartofaccount_{{$i}}" class="form-control select-search">
                         <option value="">Select Chart Of Account</option>
                         @foreach($chartOfAccounts as $row)
                         <option value="{{$row->id}}">{{$row->code}} - {{$row->title}}</option>
                         @endforeach
                     </select>
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control debit" type="text" autocomplete="off" name="detail[]" id="detail_{{$i}}" placeholder="Description" id="detail" />
                 </div>
                 <div class="col-md-2">
                     <input class="form-control debit" autocomplete="off" value="0" name="debit[]" id="debit_{{$i}}" placeholder="Debit Amount" id="debit" />

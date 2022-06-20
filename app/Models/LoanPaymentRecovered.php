@@ -41,7 +41,7 @@ class LoanPaymentRecovered extends Model
      *
      * @var array
      */
-    protected $fillable = ['due_id','loan_id','amount_total','amount_pr','amount_mu','amount_takaful','amount_penalty','recovered_by','recovered_date','bank_slip_id'];
+    protected $fillable = ['due_id','loan_id','amount_total','amount_pr','amount_mu','amount_fed','amount_settlement','amount_takaful','amount_penalty','recovered_by','recovered_date','bank_slip_id'];
 
 
 

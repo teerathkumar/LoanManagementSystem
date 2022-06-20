@@ -22,11 +22,11 @@
                     <tr>
                         <td>{{ $i++ }}</td>
                         <td>Property</td>
-                        <td>{{ $row->start_date }}</td>
+                        <td>{{ date("d M Y", strtotime($row->start_date)) }}</td>
                         <td>{{ $row->policy_number }}</td>
                         <td>{{ number_format($row->covered_amount,0) }}</td>
-                        <td>{{ $row->end_date }}</td>
-                        <td>{{ $row->renewal_date }}</td>
+                        <td>{{ date("d M Y", strtotime($row->end_date)) }}</td>
+                        <td>{{ date("d M Y", strtotime($row->renewal_date)) }}</td>
                     </tr>
                     @endforeach
                 </table>
@@ -45,11 +45,11 @@
                     <tr>
                         <td>{{ $j++ }}</td>
                         <td>Life</td>
-                        <td>{{ $row->start_date }}</td>
+                        <td>{{ date("d M Y", strtotime($row->start_date)) }}</td>
                         <td>{{ $row->policy_number }}</td>
                         <td>{{ number_format($row->covered_amount,0) }}</td>
-                        <td>{{ $row->end_date }}</td>
-                        <td>{{ $row->renewal_date }}</td>
+                        <td>{{ date("d M Y", strtotime($row->end_date)) }}</td>
+                        <td>{{ date("d M Y", strtotime($row->renewal_date)) }}</td>
                     </tr>
                     @endforeach
                 </table>

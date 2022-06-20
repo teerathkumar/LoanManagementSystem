@@ -90,7 +90,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('index', 'FinGeneralLedgerController@index')->name('fin-general-ledgers.index');
             Route::get('create', 'FinGeneralLedgerController@create')->name('fin-general-ledgers.create');
             Route::delete('destroy/{ttr}', 'FinGeneralLedger@destroy')->name('fin-general-ledgers.destroy');
-            Route::get('/show/{id}', 'FinGeneralLedgerController@show')->name('fin-general-ledgers.show');
+            Route::get('/show/{ttr}', 'FinGeneralLedgerController@show')->name('fin-general-ledgers.show');
+            Route::get('/vouchers', 'VoucherController@index')->name('fin-general-ledgers.vouchers');
             Route::get('edit/{ttr}', 'FinGeneralLedgerController@edit')->name('fin-general-ledgers.edit');
             Route::patch('update/{ttr}', 'FinGeneralLedgerController@update')->name('fin-general-ledgers.update');
             Route::post('store', 'FinGeneralLedgerController@store')->name('fin-general-ledgers.store');
@@ -197,10 +198,13 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('showloan/{ttr}', 'LoansController@showloan')->name('ttr.showloan');
         Route::get('gen_schedule/{ttr}', 'LoansController@gen_schedule')->name('ttr.gen_schedule');
         Route::get('loanstep/{ttr}', 'LoansController@loanstep')->name('ttr.loanstep');
+        Route::get('taxcertificate/{ttr}', 'LoansController@taxcertificate')->name('loans.taxcertificate');
         Route::post('storestep', 'LoansController@loanstepStore')->name('storestep');
 
         Route::get('pay_installment/{ttr}', 'LoanPaymentRecoveredController@pay_installment')->name('loans.pay');
         Route::get('early_settlement/{ttr}', 'LoanPaymentRecoveredController@pay_ealrysettlement')->name('loans.early');
+        Route::get('partial/{ttr}', 'LoanPaymentRecoveredController@pay_partial')->name('loans.partial');
+        Route::post('store_partial', 'LoanPaymentRecoveredController@store_partial')->name('loan-payment-recovereds.store_partial');
         Route::get('takaful/{ttr}', 'LoansController@takafulreport')->name('loans.takaful');
     });
     //Payments
@@ -231,6 +235,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('create', 'LoanPaymentRecoveredController@create')->name('loan-payment-recovereds.create');
             Route::post('store', 'LoanPaymentRecoveredController@store')->name('loan-payment-recovereds.store');
             Route::post('storepay', 'LoanPaymentRecoveredController@storepay')->name('loan-payment-recovereds.storepay');
+            Route::post('earlypay', 'LoanPaymentRecoveredController@earlypay')->name('loan-payment-recovereds.earlypay');
             Route::delete('destroy/{ttr}', 'LoanPaymentRecoveredController@destroy')->name('loan-payment-recovereds.destroy');
             Route::get('show', 'LoanPaymentRecoveredController@show')->name('loan-payment-recovereds.show');
             Route::get('edit/{ttr}', 'LoanPaymentRecoveredController@edit')->name('loan-payment-recovereds.edit');

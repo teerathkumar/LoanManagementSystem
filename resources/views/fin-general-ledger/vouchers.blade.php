@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('page_title', 'Fin General Ledger')
+@section('page_title', 'Voucher Management')
 @section('content')
 
                 <div class="card">
@@ -7,7 +7,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Fin General Ledger') }}
+                                {{ __('Voucher Management') }}
                             </span>
 
                              <div class="float-right">
