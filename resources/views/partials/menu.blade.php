@@ -67,7 +67,7 @@
                             <li class="nav-item"><a href="{{ route('general-offices.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['general-offices.index']) ? 'active' : '' }}">Offices</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['fin-general-ledgers.index','fin-chart-of-accounts.index','fin-banks-accounts.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
+                    <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['fin-general-ledgers.vouchers', 'fin-general-ledgers.index','fin-chart-of-accounts.index','fin-banks-accounts.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">
                         <a href="#" class="nav-link"><i class="icon-cash"></i> <span> Finance</span></a>
 
                         <ul class="nav nav-group-sub" data-submenu-title="Finance">
@@ -77,6 +77,7 @@
                             <li class="nav-item"><a href="{{ route('fin-chart-of-accounts.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-chart-of-accounts.index']) ? 'active' : '' }}">Chart of Accounts</a></li>
                             <li class="nav-item"><a href="{{ route('fin-banks-accounts.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-banks-accounts.index']) ? 'active' : '' }}">Bank Accounts</a></li>
                             <li class="nav-item"><a href="{{ route('fin-checkbooks.index') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-checkbooks.index']) ? 'active' : '' }}">Checkbooks</a></li>
+                            <li class="nav-item"><a href="{{ route('fin-general-ledgers.vouchers') }}" class="nav-link {{ in_array(Route::currentRouteName(), ['fin-general-ledgers.vouchers']) ? 'active' : '' }}">Vouchers</a></li>
                         </ul>
                     </li>
                     <li class="nav-item nav-item-submenu {{ in_array(Route::currentRouteName(), ['hr-employees.index', 'hr-jobs.index']) ? 'nav-item-expanded nav-item-open' : '' }} ">

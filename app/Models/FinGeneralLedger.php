@@ -46,6 +46,12 @@ class FinGeneralLedger extends Model
         return $this->belongsTo(GeneralOffice::class, 'office_id');
     }
     
+    
+    public function ledgerdetails(){
+        
+        return $this->hasMany(FinGeneralLedgerDetail::class, 'fin_gen_id', 'id');
+    }
+    
 
 
 }

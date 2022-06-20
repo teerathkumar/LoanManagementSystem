@@ -11,8 +11,10 @@ use Illuminate\Http\Request;
  * Class FinGeneralLedgerController
  * @package App\Http\Controllers
  */
-class FinGeneralLedgerController extends Controller
-{
+class FinGeneralLedgerController extends Controller {
+
+    public $ar = [1 => 'BPv', 'BRV', 'CPV', 'CRV', 'JV'];
+
     public static function addDigits($i, $zeroes) {
         // 1 - 5
         $ret = '';
@@ -24,13 +26,74 @@ class FinGeneralLedgerController extends Controller
         return $ret . $i;
     }
 
+    public static function getReference($reference, $i, $zeroes) {
+        $ar = [1 => 'BPV', 'BRV', 'CPV', 'CRV', 'JV'];
+        $reference = $ar[$reference];
+        return $reference . "" . self::addDigits($i, $zeroes);
+    }
+
+    public static function getVoucherHeading($reference) {
+        $ar = [1 => 'BANK PAYMENT VOUCHER', 'BANK RECEIPT VOUCHER', 'CASH PAYMENT VOUCHER', 'CASH RECEIPT VOUCHER', 'JOURNAL VOUCHER'];
+        $reference = $ar[$reference];
+        $value = "9843";
+        //echo self::convertNumberToWord($value);
+
+        return $reference;
+    }
+
+    static function getChartOfAccountTitle($id){
+        $COA_Data = FinChartOfAccount::where('id',$id)->select('code','title')->first();
+        return $COA_Data->code." - ".$COA_Data->title;
+    }
+    static function convertNumberToWord($num = false) {
+        $num = str_replace(array(',', ' '), '', trim($num));
+        if (!$num) {
+            return false;
+        }
+        $num = (int) $num;
+        $words = array();
+        $list1 = array('', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven',
+            'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+        );
+        $list2 = array('', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred');
+        $list3 = array('', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion',
+            'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quattuordecillion',
+            'quindecillion', 'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion'
+        );
+        $num_length = strlen($num);
+        $levels = (int) (($num_length + 2) / 3);
+        $max_length = $levels * 3;
+        $num = substr('00' . $num, -$max_length);
+        $num_levels = str_split($num, 3);
+        for ($i = 0; $i < count($num_levels); $i++) {
+            $levels--;
+            $hundreds = (int) ($num_levels[$i] / 100);
+            $hundreds = ($hundreds ? ' ' . $list1[$hundreds] . ' hundred' . ' ' : '');
+            $tens = (int) ($num_levels[$i] % 100);
+            $singles = '';
+            if ($tens < 20) {
+                $tens = ($tens ? ' ' . $list1[$tens] . ' ' : '' );
+            } else {
+                $tens = (int) ($tens / 10);
+                $tens = ' ' . $list2[$tens] . ' ';
+                $singles = (int) ($num_levels[$i] % 10);
+                $singles = ' ' . $list1[$singles] . ' ';
+            }
+            $words[] = $hundreds . $tens . $singles . ( ( $levels && (int) ( $num_levels[$i] ) ) ? ' ' . $list3[$levels] . ' ' : '' );
+        } //end for loop
+        $commas = count($words);
+        if ($commas > 1) {
+            $commas = $commas - 1;
+        }
+        return implode(' ', $words);
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         $finGeneralLedgers = FinGeneralLedger::get();
 
         return view('fin-general-ledger.index', compact('finGeneralLedgers'))->with('i');
@@ -41,64 +104,70 @@ class FinGeneralLedgerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         $finGeneralLedger = new FinGeneralLedger();
-        $chartOfAccounts = FinChartOfAccount::where("level","L5")->orderBy("code")->get();
+        $chartOfAccounts = FinChartOfAccount::where("level", "L5")->orderBy("code")->get();
         $TxnDate = date("M d Y");
         $Reference = "BPV001";
-        
-        $data = FinGeneralLedger::where('cheque_number','!=','NULL')->orderBy("id", "desc")->first();
+
+        $data = FinGeneralLedger::where('cheque_number', '!=', 'NULL')->orderBy("id", "desc")->first();
 //        dd($data);
-        if($data){
-            $chqnum = (int)$data->cheque_number;
+        if ($data) {
+            $chqnum = (int) $data->cheque_number;
             $chqnum += 1;
         } else {
             $chqnum = "1";
         }
-        
+
 //        $chqnum = "1";
-        
-        return view('fin-general-ledger.create', compact('finGeneralLedger','chartOfAccounts', 'Reference', 'TxnDate', 'chqnum'));
+
+        return view('fin-general-ledger.create', compact('finGeneralLedger', 'chartOfAccounts', 'Reference', 'TxnDate', 'chqnum'));
     }
 
-    /** 
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         request()->validate(FinGeneralLedger::$rules);
-        
-        
-        $LastSeries = FinGeneralLedger::orderBy("id", "desc")->first()->txn_series;
+
+        //$reference = $request->get("reference");
         extract($request->all());
+
+        $LastSeries = FinGeneralLedger::where(['txn_type' => $reference])->orderBy("id", "desc")->first();
+        if (!$LastSeries) {
+            $LastSeries = 1;
+        } else {
+            $LastSeries = $LastSeries->txn_series + 1;
+        }
+
         $TxnDate = date("Y-m-d", strtotime($TxnDate));
         $ChqNum = $chqnum;
         //dd($request->all());
         $userId = \Illuminate\Support\Facades\Auth::user()->id;
-        
+
         //Maintain General Ledger
         $Model_GL = \App\Models\FinGeneralLedger::create([
-                    'user_id' => $userId,'details'=>$purpose, 'debit' => 0, 'credit' => 0, 'txn_date' => $TxnDate, 'txn_type' => 1,'txn_series'=>$LastSeries+1,'cheque_number'=>$ChqNum, 'office_id' => 1
+                    'user_id' => $userId, 'details' => $purpose, 'debit' => 0, 'credit' => 0, 'txn_date' => $TxnDate, 'txn_type' => $reference, 'txn_series' => $LastSeries, 'cheque_number' => $ChqNum, 'office_id' => 1
         ]);
         $FinGL_Id = $Model_GL->id;
-        
-        $TotalDebit=0;
-        $TotalCredit=0;
-        foreach($chartofaccount as $key=>$val){
-            if(isset($val)){     
-                $TotalDebit+=$debit[$key];
-                $TotalCredit+=$credit[$key];
-                \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id'=>$FinGL_Id, 'coa_id' => $val, 'debit' => $debit[$key], 'credit' => $credit[$key]]);
+
+        $TotalDebit = 0;
+        $TotalCredit = 0;
+        foreach ($chartofaccount as $key => $val) {
+            if (isset($val)) {
+                $TotalDebit += $debit[$key];
+                $TotalCredit += $credit[$key];
+                
+                \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'detail'=>$detail[$key], 'coa_id' => $val, 'debit' => $debit[$key], 'credit' => $credit[$key]]);
             }
         }
-        FinGeneralLedger::find($FinGL_Id)->update(['debit'=>$TotalDebit,'credit'=>$TotalCredit]);
+        FinGeneralLedger::find($FinGL_Id)->update(['debit' => $TotalDebit, 'credit' => $TotalCredit]);
 
         return redirect()->route('fin-general-ledgers.index')
-            ->with('flash_success', 'Entry Created Successfully.');
+                        ->with('flash_success', 'Entry Created Successfully.');
     }
 
     /**
@@ -107,12 +176,14 @@ class FinGeneralLedgerController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        dd($id);
-        $finGeneralLedger = FinGeneralLedger::find($id);
-        dd($finGeneralLedger);
+    public function show($id) {
+        //dd($id);
 
+        $finGeneralLedger = FinGeneralLedger::where('fin_general_ledgers.id', $id)->with('ledgerdetails')->first();
+        //  echo "<pre>";
+        //    print_r($finGeneralLedger);
+        //      echo "</pre>";
+//die;
         return view('fin-general-ledger.show', compact('finGeneralLedger'));
     }
 
@@ -122,8 +193,7 @@ class FinGeneralLedgerController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         $finGeneralLedger = FinGeneralLedger::find($id);
 
         return view('fin-general-ledger.edit', compact('finGeneralLedger'));
@@ -136,14 +206,13 @@ class FinGeneralLedgerController extends Controller
      * @param  FinGeneralLedger $finGeneralLedger
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FinGeneralLedger $finGeneralLedger)
-    {
+    public function update(Request $request, FinGeneralLedger $finGeneralLedger) {
         request()->validate(FinGeneralLedger::$rules);
 
         $finGeneralLedger->update($request->all());
 
         return redirect()->route('fin-general-ledgers.index')
-            ->with('flash_success', 'FinGeneralLedger updated successfully');
+                        ->with('flash_success', 'FinGeneralLedger updated successfully');
     }
 
     /**
@@ -151,11 +220,11 @@ class FinGeneralLedgerController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         $finGeneralLedger = FinGeneralLedger::find($id)->delete();
 
         return redirect()->route('fin-general-ledgers.index')
-            ->with('flash_success', 'FinGeneralLedger deleted successfully');
+                        ->with('flash_success', 'FinGeneralLedger deleted successfully');
     }
+
 }

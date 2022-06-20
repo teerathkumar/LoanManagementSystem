@@ -29,7 +29,7 @@ class FinGeneralLedgerDetail extends Model
      *
      * @var array
      */
-    protected $fillable = ['coa_id','fin_gen_id','debit','credit'];
+    protected $fillable = ['coa_id','fin_gen_id', 'detail', 'debit','credit'];
 
 
 
