@@ -14,6 +14,34 @@ use Illuminate\Http\Request;
 class FinGeneralLedgerController extends Controller {
 
     public $ar = [1 => 'BPv', 'BRV', 'CPV', 'CRV', 'JV'];
+    public $voucher_status = [1 => "Prepared", "Checked", "Approved", "Recieved"];
+
+    public function filemanager() {
+        //echo app_path() . '/helpers/filemanager/config/config.php';
+        //die;
+        $config = include_once(app_path() . '\helpers\filemanager\config\config.php');
+        $languages = include_once(app_path() . '\helpers\filemanager\lang\languages.php');
+        $utils = include_once(app_path() . '\helpers\filemanager\include\utils.php');
+        return view('filemanager.dialog', compact('config', 'utils', 'languages'));
+    }
+
+    public function upload() {
+        
+    }
+
+    public function getDocuments($id) {
+        $finGeneralLedger = FinGeneralLedger::where('fin_general_ledgers.id', $id)->with('ledgerdetails')->first();
+        return view('fin-general-ledger.showvoucher', compact('finGeneralLedger'));
+    }
+
+    public function getVoucherStatus($status) {
+        $statusAr = [1 => "Prepared", "Checked", "Approved", "Recieved"];
+        $LoanStatus = "";
+        $title = $statusAr[$status];
+
+        $class = [1 => "warning", 2 => "notice", 3 => "primary", 4 => "success"];
+        return '<span class="badge badge-pill badge-' . ($class[$status]) . '">' . $title . '</span>';
+    }
 
     public static function addDigits($i, $zeroes) {
         // 1 - 5
@@ -41,10 +69,11 @@ class FinGeneralLedgerController extends Controller {
         return $reference;
     }
 
-    static function getChartOfAccountTitle($id){
-        $COA_Data = FinChartOfAccount::where('id',$id)->select('code','title')->first();
-        return $COA_Data->code." - ".$COA_Data->title;
+    static function getChartOfAccountTitle($id) {
+        $COA_Data = FinChartOfAccount::where('id', $id)->select('code', 'title')->first();
+        return $COA_Data->code . " - " . $COA_Data->title;
     }
+
     static function convertNumberToWord($num = false) {
         $num = str_replace(array(',', ' '), '', trim($num));
         if (!$num) {
@@ -93,8 +122,16 @@ class FinGeneralLedgerController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
+    public function process($id) {
+
+        $finGeneralLedger = FinGeneralLedger::where('fin_general_ledgers.id', $id)->with('ledgerdetails')->first();
+        $GJH_Result = \App\Models\FinGeneralLedgerHistory::where('finGeneralJournalId', $id)->with('user')->get();
+  
+        return view('fin-general-ledger.process', compact('finGeneralLedger', 'GJH_Result'));
+    }
+
     public function index() {
-        $finGeneralLedgers = FinGeneralLedger::get();
+        $finGeneralLedgers = FinGeneralLedger::where(['voucher_status'=>">=3"])->get();
 
         return view('fin-general-ledger.index', compact('finGeneralLedgers'))->with('i');
     }
@@ -132,9 +169,37 @@ class FinGeneralLedgerController extends Controller {
      */
     public function store(Request $request) {
         request()->validate(FinGeneralLedger::$rules);
-
+//
+//        echo "<pre>";
+//        print_r($request->file);
+//        echo "</pre>";
+//        dd($request->all());
         //$reference = $request->get("reference");
         extract($request->all());
+
+        $file = $request->file('filesupload');
+
+//        //Display File Name
+//        echo 'File Name: ' . $file->getClientOriginalName();
+//        echo '<br>';
+//
+//        //Display File Extension
+//        echo 'File Extension: ' . $file->getClientOriginalExtension();
+//        echo '<br>';
+//        
+//        
+//
+//        //Display File Real Path
+//        echo 'File Real Path: ' . $file->getRealPath();
+//        echo '<br>';
+//
+//        //Display File Size
+//        echo 'File Size: ' . $file->getSize();
+//        echo '<br>';
+//
+//        //Display File Mime Type
+//        echo 'File Mime Type: ' . $file->getMimeType();
+
 
         $LastSeries = FinGeneralLedger::where(['txn_type' => $reference])->orderBy("id", "desc")->first();
         if (!$LastSeries) {
@@ -153,6 +218,19 @@ class FinGeneralLedgerController extends Controller {
                     'user_id' => $userId, 'details' => $purpose, 'debit' => 0, 'credit' => 0, 'txn_date' => $TxnDate, 'txn_type' => $reference, 'txn_series' => $LastSeries, 'cheque_number' => $ChqNum, 'office_id' => 1
         ]);
         $FinGL_Id = $Model_GL->id;
+        
+                //Move Uploaded File
+        $destinationPath = base_path() . '/public/uploads/'.$FinGL_Id;
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0777, true);
+        }
+        
+        
+        foreach($file as $key=>$file){
+            $fileName = date("YmdHis")."_".$FinGL_Id."_".$key.".".$file->getClientOriginalExtension();
+            //$file->move($destinationPath, $file->getClientOriginalName());
+            $file->move($destinationPath, $fileName);
+        }
 
         $TotalDebit = 0;
         $TotalCredit = 0;
@@ -160,8 +238,8 @@ class FinGeneralLedgerController extends Controller {
             if (isset($val)) {
                 $TotalDebit += $debit[$key];
                 $TotalCredit += $credit[$key];
-                
-                \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'detail'=>$detail[$key], 'coa_id' => $val, 'debit' => $debit[$key], 'credit' => $credit[$key]]);
+
+                \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'detail' => $detail[$key], 'coa_id' => $val, 'debit' => $debit[$key], 'credit' => $credit[$key]]);
             }
         }
         FinGeneralLedger::find($FinGL_Id)->update(['debit' => $TotalDebit, 'credit' => $TotalCredit]);
@@ -177,13 +255,7 @@ class FinGeneralLedgerController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {
-        //dd($id);
-
         $finGeneralLedger = FinGeneralLedger::where('fin_general_ledgers.id', $id)->with('ledgerdetails')->first();
-        //  echo "<pre>";
-        //    print_r($finGeneralLedger);
-        //      echo "</pre>";
-//die;
         return view('fin-general-ledger.show', compact('finGeneralLedger'));
     }
 
@@ -193,10 +265,50 @@ class FinGeneralLedgerController extends Controller {
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) {
-        $finGeneralLedger = FinGeneralLedger::find($id);
+    public function submitvouchers(Request $request) {
+        $userId = \Illuminate\Support\Facades\Auth::user()->id;
+        //dd($request->all());
+        $userComment = $request->get("userComment");
+        $gj_id = $request->get("gj_id");
+        $action = $request->get("action");
 
-        return view('fin-general-ledger.edit', compact('finGeneralLedger'));
+        $VoucherStatus = FinGeneralLedger::where('id', $gj_id)->first()->voucher_status;
+        FinGeneralLedger::where('id', $gj_id)->update(['voucher_status' => $VoucherStatus + 1]);
+
+        $insert = \App\Models\FinGeneralLedgerHistory::create(['finGeneralJournalId' => $gj_id, 'ProcessComment' => $userComment, 'ProcessTo' => 1, 'IsProcessed' => $action, 'ActionType' => $action, 'ProcessBy' => $userId]);
+
+        if ($insert) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function edit($id) {
+
+        $finGeneralLedger = new FinGeneralLedger();
+        $finGeneralLedger = FinGeneralLedger::find($id);
+        $chartOfAccounts = FinChartOfAccount::where("level", "L5")->orderBy("code")->get();
+        $TxnDate = date("M d Y");
+        $Reference = "BPV001";
+
+        $data = FinGeneralLedger::where('cheque_number', '!=', 'NULL')->orderBy("id", "desc")->first();
+//        dd($data);
+        if ($data) {
+            $chqnum = (int) $data->cheque_number;
+            $chqnum += 1;
+        } else {
+            $chqnum = "1";
+        }
+
+//        $chqnum = "1";
+
+        return view('fin-general-ledger.create', compact('finGeneralLedger', 'chartOfAccounts', 'Reference', 'TxnDate', 'chqnum'));
+
+//        
+//        $finGeneralLedger = FinGeneralLedger::find($id);
+//
+//        return view('fin-general-ledger.edit', compact('finGeneralLedger'));
     }
 
     /**

@@ -35,6 +35,7 @@
                                         <th>Txn Date</th>
                                         <th>Txn Number</th>
                                         <th>Office</th>
+                                        <th>Status</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -49,13 +50,15 @@
                                             <td>{{ date("j M Y", strtotime($finGeneralLedger->txn_date)) }}</td>
                                             <td>{{ App\Http\Controllers\FinGeneralLedgerController::getReference($finGeneralLedger->txn_type,$finGeneralLedger->txn_series,3) }}</td>
                                             <td>{{ $finGeneralLedger->officeinfo->name }}</td>
+                                            
+                                            <td><?php echo app('App\Http\Controllers\FinGeneralLedgerController')->getVoucherStatus($finGeneralLedger->voucher_status) ?></td>
                                             <td>
                                                 <form action="{{ route('fin-general-ledgers.destroy',$finGeneralLedger->id) }}" method="POST">
                                                     <a class="btn btn-sm btn-primary " href="{{ route('fin-general-ledgers.show', $finGeneralLedger->id) }}"><i class="fa fa-fw fa-eye"></i> Show</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('fin-general-ledgers.edit',$finGeneralLedger->id) }}"><i class="fa fa-fw fa-edit"></i> Edit</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> Delete</button>
+                                                    @if($finGeneralLedger->voucher_status<3)
+                                                    <a class="btn btn-sm btn-success " href="{{ route('fin-general-ledgers.process', $finGeneralLedger->id) }}"><i class="fa fa-fw fa-eye"></i> Process</a>
+                                                    @endif
+
                                                 </form>
                                             </td>
                                         </tr>

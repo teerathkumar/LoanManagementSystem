@@ -29,6 +29,11 @@
                                 <label class="col-md-3 col-form-label font-weight-semibold">Partial Percent:</label>
                                 <input name="percent" type="number" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Partial Percent">
                             </div>
+                            <br>
+                            <div class="row col-md-12">
+                                <label class="col-md-3 col-form-label font-weight-semibold">Partial Percent:</label>
+                                <input name="percent" type="number" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Partial Percent">
+                            </div>
                         </div>
                         <div class="form-group row">
                             <button type="submit" class="btn btn-success float-right" >Save and Pay</button>
