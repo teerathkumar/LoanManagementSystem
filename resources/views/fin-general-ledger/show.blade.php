@@ -137,7 +137,7 @@
                 <td colspan="4">&nbsp;</td>
             </tr>
             <tr  class="amount-words">
-                <td colspan="4">Amount in Words: <span>{{ App\Http\Controllers\FinGeneralLedgerController::convertNumberToWord(1323) }}</span></td>
+                <td colspan="4">Amount in Words: <span>{{ App\Http\Controllers\FinGeneralLedgerController::convertNumberToWord($GrandDebit) }}</span></td>
             </tr>
         </table>
     </div>

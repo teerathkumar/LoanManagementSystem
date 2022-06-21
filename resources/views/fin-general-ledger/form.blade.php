@@ -20,7 +20,7 @@
 
             </div>
             <div class="col-md-4"><input class="form-control" type="date" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
-            <div class="col-md-4"><input class="form-control" type="number" name="chqnum" id="chqnum" value="{{$chqnum}}" /></div>
+            <div class="col-md-4"><input class="form-control " type="number" name="chqnum" id="chqnum" value="{{$chqnum}}" /></div>
         </div>
 
         <hr>
@@ -28,6 +28,12 @@
             <div class="col-md-2"><h3>Purpose:</h3></div>
             <div class="col-md-10">
                 <input class="form-control purpose" autocomplete="off" name="purpose" id="purpose" placeholder="Purpose" id="purpose" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2"><h3>Attachments:</h3></div>
+            <div class="col-md-10">
+                <input type="file" multiple="multiple" id="filesupload" required="" name="filesupload[]" class="form-control alert-primary" />
             </div>
         </div>
 
@@ -79,6 +85,7 @@
             </div>
             @endfor
         </div>
+
 
     </div>
     <hr>

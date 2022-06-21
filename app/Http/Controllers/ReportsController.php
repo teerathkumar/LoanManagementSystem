@@ -147,6 +147,7 @@ class ReportsController extends Controller {
                 ->join("fin_general_ledger_details as gld", "gld.fin_gen_id", "=", "gl.id")
                 ->join("fin_chart_of_accounts as fca", "fca.id", "=", "gld.coa_id")
                 ->whereBetween("gl.txn_date", array($request->datefrom, $request->dateto), "and")
+                ->where("gl.voucher_status", 3)
                 ->select(DB::raw(""
                                 . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id, gl.txn_type, gl.txn_series"))
                 ->get();
@@ -156,6 +157,7 @@ class ReportsController extends Controller {
                     ->join("fin_chart_of_accounts as fca", "fca.id", "=", "gld.coa_id")
                     ->whereBetween("gl.txn_date", array($request->datefrom, $request->dateto), "and")
                     ->where("gld.coa_id", $request->chartofaccount)
+                    ->where("gl.voucher_status", 3)
                     ->select(DB::raw(""
                                     . "fca.code, fca.title, fca.parent_code, gld.debit,gld.credit, gl.txn_date, gl.id, gl.txn_type, gl.txn_series"))
                     ->get();

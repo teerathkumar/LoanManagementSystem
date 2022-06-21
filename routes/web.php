@@ -89,12 +89,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/', 'FinGeneralLedgerController@index');
             Route::get('index', 'FinGeneralLedgerController@index')->name('fin-general-ledgers.index');
             Route::get('create', 'FinGeneralLedgerController@create')->name('fin-general-ledgers.create');
+            Route::get('filemanager', 'FinGeneralLedgerController@filemanager')->name('fin-general-ledgers.filemanager');
+            Route::post('upload', 'FinGeneralLedgerController@upload')->name('fin-general-ledgers.upload');
             Route::delete('destroy/{ttr}', 'FinGeneralLedger@destroy')->name('fin-general-ledgers.destroy');
             Route::get('/show/{ttr}', 'FinGeneralLedgerController@show')->name('fin-general-ledgers.show');
+            Route::get('/process/{ttr}', 'FinGeneralLedgerController@process')->name('fin-general-ledgers.process');
             Route::get('/vouchers', 'VoucherController@index')->name('fin-general-ledgers.vouchers');
             Route::get('edit/{ttr}', 'FinGeneralLedgerController@edit')->name('fin-general-ledgers.edit');
             Route::patch('update/{ttr}', 'FinGeneralLedgerController@update')->name('fin-general-ledgers.update');
             Route::post('store', 'FinGeneralLedgerController@store')->name('fin-general-ledgers.store');
+            Route::post('/submitvouchers', 'FinGeneralLedgerController@submitvouchers');
         });
         Route::group(['prefix' => 'checkbook'], function () {
             Route::get('/', 'FinCheckbookController@index');

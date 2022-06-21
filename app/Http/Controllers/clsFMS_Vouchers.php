@@ -202,10 +202,7 @@ class clsFMS_Vouchers {
     public function GetVouchersDocuments($iGeneralJournalId, $GJTransactionDate) {
 
         //muqeemsarwar
-        $r = '<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-  <!-- Indicators -->
-';
-
+        $r = '<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">';
         $r .= '<div class="carousel-inner" role="listbox">';
 
         $dir = '../../uploads/source/' . $GJTransactionDate . '/' . $iGeneralJournalId;
@@ -217,12 +214,6 @@ class clsFMS_Vouchers {
             $file_ext = $files2[$i];
             $aFileExt = explode(".", $file_ext);
             if (count($aFileExt) == 2) {
-                //,"pdf","doc","docx"
-
-
-                //                fis.tmf.org.pk/uploads/source/2022-05-20/695902/electricy bill region office.pdf
-
-                
                 $imgPath = $_SERVER['HTTP_HOST'] . '/uploads/source/' . $GJTransactionDate . '/' . $iGeneralJournalId . '/' . $file_ext;
               
                 if (in_array($aFileExt[1], array("jpg", "png", "gif"))) {
