@@ -27,12 +27,12 @@
                             <br>
                             <div class="row col-md-12">
                                 <label class="col-md-3 col-form-label font-weight-semibold">Partial Percent:</label>
-                                <input name="percent" type="number" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Partial Percent">
+                                <input name="percent" type="number" min="1" max="25" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Partial Percent">
                             </div>
                             <br>
                             <div class="row col-md-12">
-                                <label class="col-md-3 col-form-label font-weight-semibold">Partial Percent:</label>
-                                <input name="percent" type="number" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Partial Percent">
+                                <label class="col-md-3 col-form-label font-weight-semibold">Date:</label>
+                                <input name="date" type="date" class="col-md-9 form-control  col-form-label font-weight-semibold" placeholder="Date">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -45,6 +45,8 @@
                 
                 <span>
                     Partial Percent: <strong>{{ $percent }}%</strong> <br>
+                    Due Principle: <strong>{{ number_format($due_pr,0)  }}</strong> <br>
+                    Total Outstanding: <strong>{{ number_format($outstanding,0)  }}</strong> <br>
                     Partial Amount: <strong>{{ number_format($partial,0) }} </strong><br>
                 </span>
                 

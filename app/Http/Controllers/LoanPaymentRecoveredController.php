@@ -172,13 +172,13 @@ class LoanPaymentRecoveredController extends Controller {
 
     public function earlypay(Request $request) {
         $loanId = $request->loanId;
-    $dueInfo = \App\Models\LoanPaymentDue::where(['loan_id'=>$loanId, 'payment_status'=>0])->orderBy('id')->limit(1)->first();
-        if($dueInfo){
+        $dueInfo = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'payment_status' => 0])->orderBy('id')->limit(1)->first();
+        if ($dueInfo) {
             $DueId = $dueInfo->id;
-            \App\Models\LoanPaymentDue::where('id',$DueId)->update(['payment_status'=>1]);
+            \App\Models\LoanPaymentDue::where('id', $DueId)->update(['payment_status' => 1]);
         }
-        
-        
+
+
         $amount_outstanding = $request->amount_outstanding;
         $amount_total = $request->amount_total;
         $amount_profit = $request->amount_profit;
@@ -200,7 +200,7 @@ class LoanPaymentRecoveredController extends Controller {
             'recovered_date' => $recovered_date,
             'bank_slip_id' => $bank_slip_id
         ];
-        \App\Models\LoanHistory::where('id', $loanId)->update(['loan_status_id'=>7]);
+        \App\Models\LoanHistory::where('id', $loanId)->update(['loan_status_id' => 7]);
 
         LoanPaymentRecovered::create($PayData);
         return redirect()->route('loan-payment-recovereds.index')
@@ -211,6 +211,8 @@ class LoanPaymentRecoveredController extends Controller {
 
 
         $d['loanId'] = $loanId;
+        $OD_Check = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'due_date' => "<" . date("Y-m-d")])->get();
+        $d['overdue'] = $OD_Check;
         return view('loan-payment-recovered.partial', $d);
     }
 
@@ -226,9 +228,21 @@ class LoanPaymentRecoveredController extends Controller {
             $outstanding = \App\Models\LoanHistory::where('id', $loanId)->first()->total_amount_pr;
         }
         $partial = ($outstanding - $DuePr) * $percent / 100;
+        
+        if ($percent > 25) {
+            $charges = 4.5;
+        } else if ($installment_no <= 24) {
+            $charges = 3;
+        } else if ($installment_no <= 36) {
+            $charges = 1.5;
+        } else {
+            $charges = 0;
+        }
 
         $d['loanId'] = $data['loanId'];
         $d['percent'] = $data['percent'];
+        $d['outstanding'] = $outstanding;
+        $d['due_pr'] = $DuePr;
         $d['partial'] = $partial;
 
         return view('loan-payment-recovered.partial', $d);
