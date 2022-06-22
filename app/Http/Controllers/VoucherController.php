@@ -150,12 +150,17 @@ class VoucherController extends Controller {
         
     }
     public function GetVouchersDocuments($iGeneralJournalId) {
-        $r = '<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">';
-        $r .= '<div class="carousel-inner" role="listbox">';
-
+          
+$r = '<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+      
+      ';
         //$dir = base_path().'\public\uploads\source\\' . $GJTransactionDate . '\\' . $iGeneralJournalId;
         $dir = base_path() . '/public/uploads/'.$iGeneralJournalId.'/';
 
+        if(!file_exists($dir)){
+            mkdir($dir);
+        }
         $files1 = scandir($dir);
         $files2 = scandir($dir, 1);
 
@@ -167,12 +172,10 @@ class VoucherController extends Controller {
                 $imgPath = '/uploads/' . $iGeneralJournalId . '/' . $file_ext;
 
                 if (in_array($aFileExt[1], array("jpg","jpeg", "png", "gif"))) {
-                    $r .= '<div class="item ' . ($j == 0 ? "active" : "") . '">
-                    <img style="margin:0 auto; height:520px;" src="' . $imgPath . '" alt="">
-                    <div class="carousel-caption" style="position:static;top:25px;color:#000;">
-                        ' . $aFileExt[0] . '
-                    </div>
-                </div>';
+                    $r .= '
+                    <div class="carousel-item ' . ($j == 0 ? "active" : "") . '">
+                        <img class="d-block w-100" style="margin:0 auto; height:520px;" src="'.$imgPath.'" alt="First slide">
+                      </div>';
 
                     $j++;
                 }
@@ -181,15 +184,11 @@ class VoucherController extends Controller {
                 // </div>
                 if (in_array($aFileExt[1], array("pdf", "doc", "docx", "txt"))) {
 
-                    $r .= '<div class="item ' . ($j == 0 ? "active" : "") . '">                    
+                    $r .= '<div class="carousel-item ' . ($j == 0 ? "active" : "") . '">                  
                     
-                    <div style="margin:0 auto; height:520px;" caste="sahito">
                         <iframe src="https://' . $imgPath . '" frameborder="0" style="margin:0 auto;width:85%; height:520px;display:block;"></iframe>
                     </div>
-                    <div class="carousel-caption" style="position:static;top:25px;color:#000;">
-                        ' . $aFileExt[0] . '
-                    </div>
-                </div>';
+                    ';
                     $j++;
                     //<embed src="pdfFiles/interfaces.pdf" width="600" height="500" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
                 }
@@ -199,15 +198,16 @@ class VoucherController extends Controller {
         if ($j == 0) {
             $r .= '<div align="center" style="padding:10px;">..:: No Any Documents Found ::..</div>';
         }
-        $r .= '</div>';
 
-        $r .= '<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        $r .= '</div>
+  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="sr-only">Previous</span>
   </a>
-  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="sr-only">Next</span>
-  </a>
-</div>';
+  </a></div>';
         return $r;
     }
 

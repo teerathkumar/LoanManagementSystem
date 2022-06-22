@@ -39,7 +39,7 @@ class FinGeneralLedgerController extends Controller {
         $LoanStatus = "";
         $title = $statusAr[$status];
 
-        $class = [1 => "warning", 2 => "notice", 3 => "primary", 4 => "success"];
+        $class = [1 => "warning", 2 => "secondary", 3 => "primary", 4 => "success"];
         return '<span class="badge badge-pill badge-' . ($class[$status]) . '">' . $title . '</span>';
     }
 
@@ -271,11 +271,16 @@ class FinGeneralLedgerController extends Controller {
         $userComment = $request->get("userComment");
         $gj_id = $request->get("gj_id");
         $action = $request->get("action");
-
         $VoucherStatus = FinGeneralLedger::where('id', $gj_id)->first()->voucher_status;
-        FinGeneralLedger::where('id', $gj_id)->update(['voucher_status' => $VoucherStatus + 1]);
+        if(\Illuminate\Support\Facades\Auth::user()->user_type=="cfo"){
+            $action_type = "3";
+        } else if(\Illuminate\Support\Facades\Auth::user()->user_type=="finance"){
+            $action_type = "1";
+        }
+        
+        FinGeneralLedger::where('id', $gj_id)->update(['voucher_status' => $action_type]);
 
-        $insert = \App\Models\FinGeneralLedgerHistory::create(['finGeneralJournalId' => $gj_id, 'ProcessComment' => $userComment, 'ProcessTo' => 1, 'IsProcessed' => $action, 'ActionType' => $action, 'ProcessBy' => $userId]);
+        $insert = \App\Models\FinGeneralLedgerHistory::create(['finGeneralJournalId' => $gj_id, 'ProcessComment' => $userComment, 'ProcessTo' => 1, 'IsProcessed' => $action, 'ActionType' => $action_type, 'ProcessBy' => $userId]);
 
         if ($insert) {
             return true;
