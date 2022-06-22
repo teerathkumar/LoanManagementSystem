@@ -50,8 +50,6 @@
                     Partial Amount: <strong>{{ number_format($partial,0) }} </strong><br>
                 </span>
                 
-                
-
                 @endif
 
             </div>

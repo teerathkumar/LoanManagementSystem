@@ -156,7 +156,7 @@ $r = '<div id="carouselExampleControls" class="carousel slide" data-ride="carous
       
       ';
         //$dir = base_path().'\public\uploads\source\\' . $GJTransactionDate . '\\' . $iGeneralJournalId;
-        $dir = base_path() . '/public/uploads/'.$iGeneralJournalId.'/';
+        $dir = base_path() . '/uploads/'.$iGeneralJournalId.'/';
 
         if(!file_exists($dir)){
             mkdir($dir);
