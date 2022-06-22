@@ -219,7 +219,7 @@ class FinGeneralLedgerController extends Controller {
         $FinGL_Id = $Model_GL->id;
         
                 //Move Uploaded File
-        $destinationPath = base_path() . '/public/uploads/'.$FinGL_Id;
+        $destinationPath = base_path() . '/uploads/'.$FinGL_Id;
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0777, true);
         }
