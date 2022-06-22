@@ -134,8 +134,6 @@
                         </ul>
                     </li>
                 
-                
-                @include('pages.'.Qs::getUserType().'.menu')
 
                 {{--Manage Account--}}
                 <li class="nav-item">
