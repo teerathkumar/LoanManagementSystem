@@ -11,7 +11,7 @@ class VoucherController extends Controller {
         $usertype = \Illuminate\Support\Facades\Auth::user()->user_type;
         //echo $usertype;
         if($usertype=="cfo"){
-            $status = [2,3];
+            $status = [1,2,3];
         } else if($usertype=="finance"){
             $status = [1];
         } else {
