@@ -131,8 +131,7 @@ class FinGeneralLedgerController extends Controller {
     }
 
     public function index() {
-        $finGeneralLedgers = FinGeneralLedger::where(['voucher_status'=>">=3"])->get();
-
+        $finGeneralLedgers = FinGeneralLedger::whereIn('voucher_status', [3,4]])->get();
         return view('fin-general-ledger.index', compact('finGeneralLedgers'))->with('i');
     }
 
