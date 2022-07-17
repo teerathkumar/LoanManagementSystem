@@ -3,13 +3,13 @@
         <div class="row">
             <div class="col-md-4">Reference</div>
             <div class="col-md-4">Transaction Date</div>
-            <div class="col-md-4">Cheque Number</div>
+            <div class="col-md-4 chequenum">Cheque Number</div>
         </div>
 
         <div class="row">
             <div class="col-md-4">
 <!--                <input type="hidden" name="reference" value="{{$Reference}}" />-->
-                <select name="reference" id="reference" class="form-control select-search">
+                <select name="reference" required="required" id="reference" class="form-control select-search">
                     <option value="">Select Payment Type</option>
                     <option value="1">BPV</option>
                     <option value="2">BRV</option>
@@ -19,15 +19,15 @@
                 </select>
 
             </div>
-            <div class="col-md-4"><input class="form-control" type="date" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
-            <div class="col-md-4"><input class="form-control " type="number" name="chqnum" id="chqnum" value="{{$chqnum}}" /></div>
+            <div class="col-md-4"><input class="form-control" type="date" required="required" name="TxnDate" id="TxnDate" value="{{$TxnDate}}" /></div>
+            <div class="col-md-4"><input class="form-control chequenum" type="number" name="chqnum" id="chqnum" value="{{$chqnum}}" /></div>
         </div>
 
         <hr>
         <div class="row">
             <div class="col-md-2"><h3>Purpose:</h3></div>
             <div class="col-md-10">
-                <input class="form-control purpose" autocomplete="off" name="purpose" id="purpose" placeholder="Purpose" id="purpose" />
+                <input class="form-control purpose" required="required" autocomplete="off" name="purpose" id="purpose" placeholder="Purpose" id="purpose" />
             </div>
         </div>
         <div class="row">
@@ -60,7 +60,7 @@
         </div>
 
         <div id="gl_rows">
-            @for($i=1; $i<=10; $i++)
+            @for($i=1; $i<=50; $i++)
             <div class="row gl_rows_{{$i}}" style="display: none;">
                 <div class="col-md-1">
                     {{$i}}
@@ -74,25 +74,54 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input class="form-control debit" type="text" autocomplete="off" name="detail[]" id="detail_{{$i}}" placeholder="Description" id="detail" />
+                    <input class="form-control inputvalues detail" type="text" autocomplete="off" name="detail[]" id="detail_{{$i}}" placeholder="Description" id="detail" />
                 </div>
                 <div class="col-md-2">
-                    <input class="form-control debit" autocomplete="off" value="0" name="debit[]" id="debit_{{$i}}" placeholder="Debit Amount" id="debit" />
+                    <input class="form-control inputvalues debit" autocomplete="off" value="0" name="debit[]" id="debit_{{$i}}" placeholder="Debit Amount" />
                 </div>
                 <div class="col-md-2">
-                    <input class="form-control credit" autocomplete="off" value="0" name="credit[]" id="credit_{{$i}}" placeholder="Credit Amount" id="credit" />
+                    <input class="form-control inputvalues credit" autocomplete="off" value="0" name="credit[]" id="credit_{{$i}}" placeholder="Credit Amount" />
                 </div>
             </div>
             @endfor
         </div>
+        <hr>
+        <div class="row" style="font-size: 18px; font-weight: bold;">
+            <div class="col-md-8" align="right">Total</div>
+            <div class="col-md-2 granddebit form-control"></div>
+            <div class="col-md-2 grandcredit form-control"></div>
 
+        </div>
 
     </div>
     <hr>
     <div class="box-footer mt20">
-        <button type="submit" class="btn btn-primary col-md-12">Save</button>
+        <button type="button" class="btn btn-primary col-md-12 submitbtn">Save</button>
     </div>
 </div>
 <script>
-
+$(document).ready(function(){
+    $("#reference").change(function(){
+        console.log(parseInt($("#reference").val()));
+        if(parseInt($("#reference").val())==5){
+            //$("#reference").val();
+            console.log("thats it: "+parseInt($("#reference").val()));
+            //$("#chqnum").attr("disabled", "disabled");
+            $(".chequenum").hide();
+        } else {
+            $(".chequenum").show();
+        }
+    });
+    $(".submitbtn").click(function(){
+        var totaldebit = $(".granddebit").html();
+        var totalcredit = $(".grandcredit").html();
+        
+        if(parseInt(totaldebit)>0 && parseInt(totaldebit)==parseInt(totalcredit)){
+            $("#myform").submit();
+        } else {
+            alert("Please make it sure that Grand debit and credit are equal");
+        }
+    });
+    
+});
 </script>

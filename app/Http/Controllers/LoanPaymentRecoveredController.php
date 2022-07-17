@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use DateTime;
 use App\Models\LoanPaymentRecovered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -187,6 +187,7 @@ class LoanPaymentRecoveredController extends Controller {
         $amount_total = $request->amount_total;
         $recovered_date = date("Y-m-d");
         $bank_slip_id = 1;
+        $userId = \Illuminate\Support\Facades\Auth::user()->id;
         $PayData = [
             'loan_id' => $loanId,
             'due_id' => 0,
@@ -196,13 +197,13 @@ class LoanPaymentRecoveredController extends Controller {
             'amount_fed' => $amount_fed,
             'amount_settlement' => $amount_settlement,
             'amount_takaful' => 0,
-            'recovered_by' => 1,
+            'recovered_by' => $userId,
             'recovered_date' => $recovered_date,
             'bank_slip_id' => $bank_slip_id
         ];
-        \App\Models\LoanHistory::where('id', $loanId)->update(['loan_status_id' => 7]);
 
         LoanPaymentRecovered::create($PayData);
+        \App\Models\LoanHistory::where('id', $loanId)->update(['loan_status_id' => 7]);
         return redirect()->route('loan-payment-recovereds.index')
                         ->with('flash_success', 'Loan Payment created successfully.');
     }
@@ -218,43 +219,443 @@ class LoanPaymentRecoveredController extends Controller {
 
     public function store_partial(Request $request) {
         $data = $request->all();
+//        dd($data);
         $loanId = $data['loanId'];
         $percent = $data['percent'];
-        $DuePr = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'payment_status' => 0])->first()->amount_pr;
+        $partial_date = date("Y-m-d", strtotime($data['date']));
+        $installment_no = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'due_date' => $partial_date])->first()->installment_no;
         $outstanding = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'payment_status' => 1])->orderBy('id', 'desc')->first();
+        $loan_history = \App\Models\LoanHistory::where('id', $loanId)->first();
         if ($outstanding) {
             $outstanding = $outstanding->outstanding;
         } else {
-            $outstanding = \App\Models\LoanHistory::where('id', $loanId)->first()->total_amount_pr;
+            $outstanding = $loan_history->total_amount_pr;
         }
-        $partial = ($outstanding - $DuePr) * $percent / 100;
-        
-        if ($percent > 25) {
+        $partial = ($outstanding) * $percent / 100;
+
+        $markup_percent = 0;
+        if($percent>25)
+        $markup_percent = $percent - 25;
+        $upper_partial = 0;
+        if($markup_percent>0){
+            $upper_partial = ($outstanding) * $markup_percent / 100;
+        }
+                
+        if($installment_no<=12){
             $charges = 4.5;
-        } else if ($installment_no <= 24) {
+        } else if($installment_no<=24){
             $charges = 3;
-        } else if ($installment_no <= 36) {
+        } else if($installment_no<=36){
             $charges = 1.5;
         } else {
             $charges = 0;
         }
-
+        
+        $markup = $upper_partial*($charges/100);
+        
         $d['loanId'] = $data['loanId'];
         $d['percent'] = $data['percent'];
         $d['outstanding'] = $outstanding;
-        $d['due_pr'] = $DuePr;
         $d['partial'] = $partial;
+        $d['upper_partial'] = $upper_partial;
+        $d['markup_percent'] = $markup_percent;
+        $d['markup'] = $markup;
+        
+        $TotalRemainingOutstanding = $outstanding-($partial+$upper_partial);
+        $loan_period = $loan_history->loan_period - $installment_no;
+        
+                $PayData = [
+            'loan_id' => $loanId,
+            'due_id' => 0,
+            'amount_total' => $amount_total,
+            'amount_pr' => $amount_outstanding,
+            'amount_mu' => $amount_profit,
+            'amount_fed' => $amount_fed,
+            'amount_settlement' => $amount_settlement,
+            'amount_takaful' => 0,
+            'recovered_by' => $userId,
+            'recovered_date' => $recovered_date,
+            'bank_slip_id' => $bank_slip_id
+        ];
 
-        return view('loan-payment-recovered.partial', $d);
+        LoanPaymentRecovered::create($PayData);
+        
+        
+        print $this->GenerateRepaymentScheduleDecline($loanId, $TotalRemainingOutstanding, $partial_date, $loan_period, $loan_history);
+        
+        //dd($d);
+        //return view('loan-payment-recovered.partial', $d);
     }
 
+    function GenerateRepaymentScheduleDecline($LoanId, $oustanding, $disb_date, $loan_period, $data) {
+//        
+//        print_r($fetchdata);
+//        die;
+
+        $takaful_amount = 0;
+        $fed_amount = 0;
+        $kibor_rate = 0;
+        $spread_rate = 0;
+
+        //dd($data);
+        $data = \App\Models\LoanHistory::find($LoanId);
+
+        $disb_day = date("d", strtotime($disb_date));
+        if ($disb_day >= 2 && $disb_day <= 5) {
+            $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-05";
+        }
+        if ($disb_day >= 6 && $disb_day <= 10) {
+            $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-10";
+        }
+        if ($disb_day >= 11 && $disb_day <= 15) {
+            $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-15";
+        }
+        if ($disb_day >= 16 && $disb_day <= 20) {
+            $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-20";
+        }
+        if ($disb_day >= 21 && $disb_day <= 25) {
+            $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-25";
+        }
+        if ($disb_day >= 26 && $disb_day <= 1) {
+            $rep_start_date = date("Y-m", strtotime($disb_date . "+1 month")) . "-01";
+        }
+//        echo $disb_date."<br>" ;
+//        echo $rep_start_date ;die;
+        $loan_freq = $data['loan_frequency'];
+        $markup_rate = $data['markup_rate'];
+//        $loan_period = $data['loan_period'];
+
+        $ChequeDate = $disb_date;
+        $ApprovedLoanAmount = round($oustanding);//$amount_pr;
+        $SrChargeRate = $markup_rate;
+        $SrChargeRate = $data['kibor_rate'] + $data['spread_rate'];
+        $LoanFrequency = $loan_freq;
+        $LoanTerm = $loan_period;
+        $RepStartDate = $rep_start_date;
+        
+        
+
+        $DueData = 0;//\App\Models\LoanPaymentDue::where(array('loan_id' => $LoanId))->exists();
+
+        if ($DueData) {
+            return 0;
+        }
+        $DayRepStart = date("d", strtotime($RepStartDate));
+        //if ($DayRepStart < 15 || $DayRepStart > 25) {
+        //  $DayRepStart = 15;
+        $RepStartDate = date("Y-m", strtotime($RepStartDate)) . "-" . $DayRepStart;
+        //}
+
+        $GrandPrinc = $GrandServ = $GrandTotal = $GrandDays = $GrandTakaful = 0;
+
+        $iLoanFrequency = $LoanFrequency;
+        $Return = "<table width='100%' border='1' bordercolor='#999999' cellspacing='0' cellpadding='4'>";
+        $Return .= "<tr bgcolor='#CCCCCC'>"
+                . "<td  align='center' rowspan='2'>Sr#</td>"
+                . "<td align='center' rowspan='2'>Schedule Date</td>"
+                . "<td align='center' rowspan='2'>Days</td>"
+                . "<td  colspan='3' align='center'>Dues</td><td rowspan='2'  align='center'>Balance</td></tr>"
+                . "<tr bgcolor='#CCCCCC'><td align='center'>Principle</td><td align='center'>Srv Charge</td><td align='center'>Takaful</td><td align='center'>Total</td></tr>";
+
+        $Return .= "<tr><td colspan='6' align='right'></td><td align='right'>$ApprovedLoanAmount</td></tr>";
+
+        $arryModeOfPayment = array(
+            1 => 1,
+            3 => 3,
+            7 => 4,
+            6 => 6,
+            4 => $LoanTerm,
+            8 => 12
+        );
+        $LoanFrequency = $arryModeOfPayment[$iLoanFrequency];
+        $arryModeOfPaymentCalc = array(
+            1 => 12,
+            3 => 4,
+            7 => 3,
+            6 => 2,
+            4 => 1,
+            8 => 1);
+
+        $SchedLoanTerm = $LoanTerm;
+        $FormulaloanTerm = $LoanTerm / 12;
+        $modeOfP = $arryModeOfPaymentCalc[$iLoanFrequency];
+
+        //$rate = interest rate
+        //$nper = number of periods
+        //$fv is future value
+        //$pv is present value
+        //$type is type
+        $fv = 0;
+        $pv = $ApprovedLoanAmount;
+        $rate = ($SrChargeRate / 100) / 360 * 30;
+        $nper = $LoanTerm;
+        $type = 0;
+
+//        $PMT = (-$fv - $pv * pow(1 + $rate, $nper)) /
+//        (1 + $rate * $type) /
+//        ((pow(1 + $rate, $nper) - 1) / $rate);
+        $PMT = ((0 - $pv * pow(1 + $rate, $nper)) /
+                (1 + $rate) /
+                ((pow(1 + $rate, $nper) - 1) / $rate)) * -1;
+
+        $rate = 16;
+        $rate = $kibor_rate + $spread_rate;
+        //echo $this->calPMT($rate, 7, $ApprovedLoanAmount);
+        //dd();        
+        //dd(round($PMT,6));
+        //dd($PMT);
+        $Fst = ($SrChargeRate / $modeOfP) / 100;
+        $Snd = pow((1 + $Fst), ($modeOfP * $FormulaloanTerm));
+        $Trd = 1 / $Snd;
+        $Fth = 1 - $Trd;
+        //$Ffth = round($Fth / $Fst, 2);
+        //$Final = round($ApprovedLoanAmount / $Ffth);
+        $Ffth = $Fth / $Fst;
+        $Final = round($ApprovedLoanAmount / $Ffth);
+
+        //echo "Final1: " . $Final . "<br>";
+        $TotalSrCharge = $ApprovedLoanAmount * ($SrChargeRate / 100);
+        //echo "Final2: " . $TotalSrCharge . "<br>";
+        $DailySrcCharge = $TotalSrCharge / 365;
+        $TotalDaysLoanTerms = $SchedLoanTerm * (365 / 12);
+
+        //echo "TotalDaysLoanTerms: " . $TotalDaysLoanTerms . "<br>";
+        //echo "DailySrcCharge: " . $DailySrcCharge . "<br>";
+        //Loop Here
+        for ($i = 1; $i <= ($SchedLoanTerm / $LoanFrequency); $i++) {
+
+            $AdditionalServiceCharges = 0;
+            if ($i == 1) {
+                $Dev_ScheduleDate = $RepStartDate;
+                $datetime_chq = new DateTime(date("Y-m-d", strtotime($ChequeDate)));
+                $datetime_repstart = new DateTime(date("Y-m-d", strtotime($RepStartDate)));
+                $difference = $datetime_chq->diff($datetime_repstart);
+            } else {
+                $PreviousRepaymentDate = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate)));
+                $date = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate)));
+                $date->modify('+' . $LoanFrequency . ' month');
+                $Dev_ScheduleDate = $date->format('Y-m-d');
+                $NextRepaymentDate = new DateTime(date("Y-m-d", strtotime($Dev_ScheduleDate)));
+                $difference = $PreviousRepaymentDate->diff($NextRepaymentDate);
+            }
+            $MonthlyServiceCharge = $ApprovedLoanAmount * $Fst;
+            //$MonthlyServiceCharge = round($MonthlyServiceCharge);
+
+
+            $MonthlyPrinciple = $Final - $MonthlyServiceCharge;
+            $MonthlyPrinciple = round($MonthlyPrinciple);
+
+            $MonthlyServiceCharge += $AdditionalServiceCharges;
+
+            if ($takaful_amount) {
+                //echo $LoanTerm."/".$i."<br>";
+                $lastTakaful = \App\Models\LoanTakaful::where(['loan_id' => $LoanId, 'type' => 0])->orderBy('id', 'desc')->first();
+                $lastTakafulLife = \App\Models\LoanTakaful::where(['loan_id' => $LoanId, 'type' => 1])->orderBy('id', 'desc')->first();
+                if (( $i == 1 || $i % 13 == 0) && $ApprovedLoanAmount >= 500) {
+                    $startDate = $Dev_ScheduleDate;
+                    $endDate = date('Y-m-d', strtotime($Dev_ScheduleDate . "+11 month "));
+                    $renewalDate = date("Y-m-d", strtotime($endDate . "+1 day"));
+                    $property_array = [
+                        'loan_id' => $LoanId,
+                        'type' => '0',
+                        'covered_amount' => $ApprovedLoanAmount,
+                        'start_date' => $Dev_ScheduleDate,
+                        'end_date' => $endDate,
+                        'renewal_date' => $renewalDate
+                    ];
+//                    print_r($property_array);
+//                    echo "<br>";
+//                    \App\Models\LoanTakaful::create($property_array);
+                    $life_array = [
+                        'loan_id' => $LoanId,
+                        'type' => '1',
+                        'covered_amount' => $ApprovedLoanAmount,
+                        'start_date' => $Dev_ScheduleDate,
+                        'end_date' => $endDate,
+                        'renewal_date' => $renewalDate
+                    ];
+                    //\App\Models\LoanTakaful::create($life_array);
+                }
+            }
+            $ApprovedLoanAmount -= $MonthlyPrinciple;
+
+            $DaysDiff = $difference->days;
+
+            $MonthlyPrinciple = round($MonthlyPrinciple);
+            $MonthlyServiceCharge = round($MonthlyServiceCharge);
+            $MonthlyTakaful = 0;
+
+            if ($i == ($SchedLoanTerm / $LoanFrequency)) {
+                if ($ApprovedLoanAmount <> 0) {
+                    $MonthlyPrinciple += $ApprovedLoanAmount;
+                    $ApprovedLoanAmount = 0;
+                }
+            }
+
+            $Total = $MonthlyPrinciple + $MonthlyServiceCharge + $MonthlyTakaful;
+
+            $sScheduledRepaymentDate = date("M j, Y", strtotime($Dev_ScheduleDate));
+            $sScheduledDay = date('D', strtotime($sScheduledRepaymentDate));
+            $sScheduledDate = date('d', strtotime($sScheduledRepaymentDate));
+            if ($sScheduledDay == "Sun") {
+                $dateScheduledRepaymentDate = new DateTime(date("Y-m-d", strtotime($sScheduledRepaymentDate)));
+                if ($sScheduledDate == 25) {
+                    //$dateScheduledRepaymentDate->modify('-1 day');
+                } else {
+                    //$dateScheduledRepaymentDate->modify('+1 day');
+                }
+                $sScheduledRepaymentDate = $dateScheduledRepaymentDate->format('Y-m-d');
+                $sScheduledRepaymentDate = date("M j, Y", strtotime($sScheduledRepaymentDate));
+            }
+            $MysqlScheduleDate = date("Y-m-d", strtotime($sScheduledRepaymentDate));
+
+//            \App\Models\LoanPaymentDue::create([
+//                'loan_id' => $LoanId,
+//                'installment_no' => $i,
+//                'due_date' => $MysqlScheduleDate,
+//                'amount_total' => $Total,
+//                'amount_pr' => $MonthlyPrinciple,
+//                'outstanding' => $ApprovedLoanAmount,
+//                'amount_mu' => $MonthlyServiceCharge,
+//                'amount_takaful' => $MonthlyTakaful
+//            ]);
+
+            $Return .= "<tr>"
+                    . "<td>$i</td>"
+                    . "<td>$MysqlScheduleDate</td>"
+                    . "<td align='right'>$DaysDiff</td>"
+                    . "<td align='right'>$MonthlyPrinciple</td>"
+                    . "<td align='right'>$MonthlyServiceCharge</td>"
+                    . "<td align='right'>$MonthlyTakaful</td>"
+                    . "<td align='right'>" . ($Total) . "</td>"
+                    . "<td align='right'>" . ($ApprovedLoanAmount) . "</td>"
+                    . "</tr>";
+
+            $GrandPrinc += $MonthlyPrinciple;
+            $GrandServ += $MonthlyServiceCharge;
+            $GrandTotal += $Total;
+            $GrandDays += $DaysDiff;
+            $GrandTakaful += $MonthlyTakaful;
+        }
+//        \App\Models\LoanHistory::find($LoanId)->update(
+//                [
+//                    'loan_status_id' => 10,
+//                    'kibor_rate' => $kibor_rate,
+//                    'spread_rate' => $spread_rate,
+//                    'takaful' => $takaful_amount,
+//                    'total_amount' => $GrandTotal,
+//                    'total_amount_pr' => $GrandPrinc,
+//                    'total_amount_mu' => $GrandServ
+//        ]);
+
+        $LastSeries = \App\Models\FinGeneralLedger::orderBy("id", "desc")->first();
+        if (!isset($LastSeries->txn_series)) {
+            $LastSeries = 0;
+        } else {
+            $LastSeries = $LastSeries->txn_series;
+        }
+        $NextSeries = $LastSeries + 1;
+
+        $ProcessingFees = $GrandPrinc * 1.5 / 100;
+        if ($fed_amount) {
+            $FED = $ProcessingFees * 13 / 100;
+        } else {
+            $FED = 0;
+        }
+        $TakafulFees = $GrandPrinc * 0.8 / 100;
+        $BankPayment = $GrandPrinc - ($ProcessingFees + $TakafulFees);
+
+        
+        /*
+//        Loan Processing fee income and FED payable
+        //First Entry ()
+        
+        
+        $Model_GL = \App\Models\FinGeneralLedger::create([
+                    'slip_id' => 1, 'loan_id' => $LoanId, 'user_id' => 1, 'details' => 'Disbursement Voucher - Loan Processing fee income and FED payable', 'debit' => $GrandPrinc, 'credit' => $GrandPrinc, 'txn_date' => date('Y-m-d'), 'txn_type' => 1, 'txn_series' => $NextSeries++, 'office_id' => 1
+        ]);
+        $FinGL_Id = $Model_GL->id;
+        //JS Bank
+        \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '172', 'debit' => ($ProcessingFees + $FED), 'credit' => 0]);
+
+        //Processing Fees
+        \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '336', 'debit' => 0, 'credit' => $ProcessingFees]);
+        if ($FED) {
+            //FED Fees
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '216', 'debit' => 0, 'credit' => $FED]);
+
+            $Model_GL = \App\Models\FinGeneralLedger::create([
+                        'slip_id' => 1, 'loan_id' => $LoanId, 'user_id' => 1, 'details' => 'payment of FED on loan processing fee', 'debit' => $FED, 'credit' => $FED, 'txn_date' => date('Y-m-d'), 'txn_type' => 1, 'txn_series' => $NextSeries++, 'office_id' => 1
+            ]);
+            $FinGL_Id = $Model_GL->id;
+
+            //JS Bank
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '172', 'debit' => 0, 'credit' => $FED]);
+            //FED Fees
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '216', 'debit' => $FED, 'credit' => 0]);
+        }
+        //First Entry ()
+        $Model_GL = \App\Models\FinGeneralLedger::create([
+                    'slip_id' => 1, 'loan_id' => $LoanId, 'user_id' => 1, 'details' => 'Disbursement Voucher', 'debit' => $GrandPrinc, 'credit' => $GrandPrinc, 'txn_date' => date('Y-m-d'), 'txn_type' => 1, 'txn_series' => $NextSeries++, 'office_id' => 1
+        ]);
+        $FinGL_Id = $Model_GL->id;
+        //Lendings To Financial Institutions
+        \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '147', 'debit' => $GrandPrinc, 'credit' => '0']);
+        //JS Bank
+        \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '172', 'debit' => 0, 'credit' => $GrandPrinc]);
+
+        //Second Entry (Takaful)
+        if ($TakafulFees) {
+            //Takaful first
+            $Model_GL = \App\Models\FinGeneralLedger::create([
+                        'slip_id' => 1, 'loan_id' => $LoanId, 'user_id' => 1, 'details' => 'Takaful Voucher - Payment Received From Borrower', 'debit' => $GrandPrinc, 'credit' => $GrandPrinc, 'txn_date' => date('Y-m-d'), 'txn_type' => 1, 'txn_series' => $NextSeries++, 'office_id' => 1
+            ]);
+            $FinGL_Id = $Model_GL->id;
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '187', 'debit' => 0, 'credit' => $TakafulFees]);
+            //JS Bank
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '172', 'debit' => $TakafulFees, 'credit' => 0]);
+
+            //Takaful second
+            $Model_GL = \App\Models\FinGeneralLedger::create([
+                        'slip_id' => 1, 'loan_id' => $LoanId, 'user_id' => 1, 'details' => 'Takaful Voucher - Payment to Takaful Company', 'debit' => $GrandPrinc, 'credit' => $GrandPrinc, 'txn_date' => date('Y-m-d'), 'txn_type' => 1, 'txn_series' => $NextSeries++, 'office_id' => 1
+            ]);
+            $FinGL_Id = $Model_GL->id;
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '187', 'debit' => $TakafulFees, 'credit' => 0]);
+            //JS Bank
+            \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '172', 'debit' => 0, 'credit' => $TakafulFees]);
+        }
+        //Processing
+        \App\Models\FinGeneralLedgerDetail::create(['fin_gen_id' => $FinGL_Id, 'coa_id' => '337', 'debit' => 0, 'credit' => $ProcessingFees]);
+
+        */
+        $dLoanBalance = $GrandServ + $GrandPrinc;
+
+        $Return .= "<tr>"
+                . "<td colspan='3'>Total ($GrandDays Days)</td>"
+                . "<td align='right'>$GrandPrinc</td>"
+                . "<td align='right'>$GrandServ</td>"
+                . "<td align='right'>$GrandTakaful</td>"
+                . "<td align='right'>$GrandTotal</td>"
+                . "<td align='right'>$ApprovedLoanAmount</td>"
+                . "</tr>";
+        $Return .= "</table>";
+        return $Return;
+    }
+
+    function calPMT($apr, $term, $loan) {
+        $term = $term * 12;
+        $apr = $apr / 1200;
+        $amount = $apr * -$loan * pow((1 + $apr), $term) / (1 - pow((1 + $apr), $term));
+        return round($amount);
+    }
+    
     public function storepay(Request $request) {
         request()->validate(LoanPaymentRecovered::$rules);
         //echo auth()->user()->name;
         //dd(auth()->user());
         $loanId = $request->loan_id;
         $payableAmount = $request->amount_total;
-        $recovered_by = $request->recovered_by;
+        $recovered_by = \Illuminate\Support\Facades\Auth::user()->id; //$request->recovered_by;
         $recovered_date = $request->recovered_date;
         $bank_slip_id = $request->bank_slip_id;
         //dd($request->all());

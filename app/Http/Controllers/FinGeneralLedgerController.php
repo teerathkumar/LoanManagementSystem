@@ -224,13 +224,13 @@ class FinGeneralLedgerController extends Controller {
             mkdir($destinationPath, 0777, true);
         }
         
-        
+        if($file){
         foreach($file as $key=>$file){
             $fileName = date("YmdHis")."_".$FinGL_Id."_".$key.".".$file->getClientOriginalExtension();
             //$file->move($destinationPath, $file->getClientOriginalName());
             $file->move($destinationPath, $fileName);
         }
-
+        }
         $TotalDebit = 0;
         $TotalCredit = 0;
         foreach ($chartofaccount as $key => $val) {
