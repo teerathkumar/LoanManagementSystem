@@ -53,7 +53,7 @@
                 padding: 5px;
             }
             .amount-words {
-                
+
             }
             .amount-words span {
                 font-weight: bold;
@@ -62,7 +62,7 @@
             }
         </style>
 
-        
+
         <table width="100%" border="1" cellspacing="0">
             <tr class="voucher-head">
                 <td colspan="4" align="center">ASAAN GHAR FINANCE LIMITED (AGFL)</td>
@@ -80,12 +80,24 @@
                 <td colspan="4" align="center">&nbsp;</td>
             </tr>
             <tr  class="upper-values">
-                <td colspan="2">Reference</td>
-                <td colspan="2">Transaction Date</td>
-            </tr>
-            <tr  class="upper-values">
-                <td colspan="2">{{ App\Http\Controllers\FinGeneralLedgerController::getReference($finGeneralLedger->txn_type,$finGeneralLedger->txn_series,3) }}</td>
-                <td colspan="2">{{ $finGeneralLedger->txn_date }}</td>
+                <td colspan="4">
+                    <table width="100%" border="1" cellspacing="0">
+                        @if($finGeneralLedger->cheque_number)
+                        <tr>
+                            <td width="30%">Cheque Number:</td>
+                            <td width="70%"><strong>{{ $finGeneralLedger->cheque_number }}</strong></td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td width="30%">Reference</td>
+                            <td width="70%"><strong>{{ App\Http\Controllers\FinGeneralLedgerController::getReference($finGeneralLedger->txn_type,$finGeneralLedger->txn_series,3) }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Transaction Date</td>
+                            <td><strong>{{ $finGeneralLedger->txn_date }}</strong></td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
             <tr  class="">
                 <td colspan="4">Purpose</td>
@@ -116,13 +128,13 @@
             @foreach($finGeneralLedger->ledgerdetails as $row)
             @php
             $i=$i+1;
-            
+
             $GrandDebit += $row->debit;
             $GrandCredit += $row->credit;
             @endphp
             <tr  class="transaction-data">
                 <td>{{ $i }}</td>
-                
+
                 <td>{{ App\Http\Controllers\FinGeneralLedgerController::getChartOfAccountTitle($row->coa_id) }} </td>
                 <td align="right">{{ number_format($row->debit,0) }}</td>
                 <td align="right">{{ number_format($row->credit,0) }}</td>
@@ -149,10 +161,10 @@
 
         mywindow.document.write('<html>');
         /*
-        mywindow.document.write('<head><title>' + document.title + '</title>');
-        mywindow.document.write('</head>');
-        mywindow.document.write('<body >');
-        mywindow.document.write('<h1>' + document.title + '</h1>');*/
+         mywindow.document.write('<head><title>' + document.title + '</title>');
+         mywindow.document.write('</head>');
+         mywindow.document.write('<body >');
+         mywindow.document.write('<h1>' + document.title + '</h1>');*/
         mywindow.document.write(document.getElementById("voucher-body").innerHTML);
         mywindow.document.write('</body></html>');
 

@@ -7,7 +7,7 @@
         <span class="card-title">Create Fin General Ledger</span>
     </div>
     <div class="card-body">
-        <form method="POST" action="{{ route('fin-general-ledgers.store') }}"  role="form" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('fin-general-ledgers.store') }}" id="myform" role="form" enctype="multipart/form-data">
             @csrf
 
             @include('fin-general-ledger.form')
