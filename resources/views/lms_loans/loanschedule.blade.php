@@ -52,28 +52,37 @@
                     <thead>
                         <tr>
                             <th>Inst.No</th>
+                            
                             <th>Due Date</th>
                             <th>Principal</th>
                             <th>Profit</th>
                             <th>Installment Amount</th>
                             <th>Outstanding Principle</th>
+                            <th>Desc.</th>
                             <th>Payment Status</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php $i=1 ?>
                         @foreach($dueinfo as $mc)
                         
+                        @if($mc->due_status==0)
+                        <?php $mc->amount_pr = array_key_exists($mc->id, $duepaidinfo[2]) ? $mc->amount_pr+$duepaidinfo[2][$mc->id]->amount_pr : $mc->amount_pr ?>
+                        <?php $mc->outstanding = array_key_exists($mc->id, $duepaidinfo[2]) ? $mc->outstanding-$duepaidinfo[2][$mc->id]->amount_pr : $mc->outstanding ?>
                         <tr>
-                            <td>{{ $mc->installment_no }}</td>
+                            <td>
+                                <?php echo $i++ ?>
+                                
+                            </td>
                             <td>{{ date("d M Y",strtotime($mc->due_date)) }}</td>
                             <td>{{ number_format($mc->amount_pr,0) }}</td>
                             <td>{{ number_format($mc->amount_mu,0) }}</td>
                             <td>{{ number_format($mc->amount_total,0) }}</td>
                             <td>{{ number_format($mc->outstanding) }}</td>
-                            
-<!--                            <td>{{ $mc->payment_status==1 ? "Paid" : "Unpaid" }}</td>-->
+                            <td><?php echo array_key_exists($mc->id, $duepaidinfo[2]) ? '<span class="badge badge-pill badge-success">PARTIAL</span>' : "" ?></td>
                             <td><?php echo $mc->payment_status ? '<span class="badge badge-pill badge-success">&nbsp;&nbsp;&nbsp;&nbsp;PAID&nbsp;&nbsp;&nbsp;&nbsp;</span>' : '<span class="badge badge-pill badge-danger">UN-PAID</span>' ?></td>
                         </tr>
+                        @endif
                         @endforeach
                     </tbody>
                 </table>
