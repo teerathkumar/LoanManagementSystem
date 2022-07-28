@@ -172,7 +172,7 @@ class FinGeneralLedgerController extends Controller {
 //        echo "<pre>";
 //        print_r($request->file);
 //        echo "</pre>";
-        dd($request->all());
+//        dd($request->all());
         //$reference = $request->get("reference");
         extract($request->all());
 
