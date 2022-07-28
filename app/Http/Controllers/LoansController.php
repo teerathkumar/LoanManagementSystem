@@ -97,8 +97,13 @@ class LoansController extends Controller {
         $d['ttr_id'] = $tt_id;
 
         $d['loaninfo'] = \App\Models\LoanHistory::where(['id' => $tt_id])->first();
-        $d['dueinfo'] = \App\Models\LoanPaymentDue::where(['loan_id' => $tt_id])->with('loan_history')->get();
+        $d['dueinfo'] = \App\Models\LoanPaymentDue::where(['loan_id' => $tt_id])->with('loan_history')->orderBy("due_date")->get();
         $d['paidinfo'] = \App\Models\LoanPaymentRecovered::where(['loan_id' => $tt_id])->get();
+        
+        foreach($d['paidinfo'] as $row){
+            $d['duepaidinfo'][$row->payment_type][$row->due_id]=$row;
+        }        
+        
         $d['bankinfo'] = \App\Models\LMSBankSlip::where(['slip_date' => date("Y-m-d")])->get();
         return view('lms_loans.loanschedule', $d);
     }

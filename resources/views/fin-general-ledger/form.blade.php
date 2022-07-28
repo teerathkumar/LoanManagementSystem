@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-md-4">
                     <select name="chartofaccount[]" id="chartofaccount_{{$i}}" class="form-control select-search">
-                        <option value="">Select Chart Of Account</option>
+                        <option value="0">Select Chart Of Account</option>
                         @foreach($chartOfAccounts as $row)
                         <option value="{{$row->id}}">{{$row->code}} - {{$row->title}}</option>
                         @endforeach
@@ -99,29 +99,3 @@
         <button type="button" class="btn btn-primary col-md-12 submitbtn">Save</button>
     </div>
 </div>
-<script>
-$(document).ready(function(){
-    $("#reference").change(function(){
-        console.log(parseInt($("#reference").val()));
-        if(parseInt($("#reference").val())==5){
-            //$("#reference").val();
-            console.log("thats it: "+parseInt($("#reference").val()));
-            //$("#chqnum").attr("disabled", "disabled");
-            $(".chequenum").hide();
-        } else {
-            $(".chequenum").show();
-        }
-    });
-    $(".submitbtn").click(function(){
-        var totaldebit = $(".granddebit").html();
-        var totalcredit = $(".grandcredit").html();
-        
-        if(parseInt(totaldebit)>0 && parseInt(totaldebit)==parseInt(totalcredit)){
-            $("#myform").submit();
-        } else {
-            alert("Please make it sure that Grand debit and credit are equal");
-        }
-    });
-    
-});
-</script>

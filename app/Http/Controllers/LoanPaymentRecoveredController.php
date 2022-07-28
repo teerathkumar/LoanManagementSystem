@@ -222,15 +222,18 @@ class LoanPaymentRecoveredController extends Controller {
 //        dd($data);
         $loanId = $data['loanId'];
         $percent = $data['percent'];
+        
         $partial_date = date("Y-m-d", strtotime($data['date']));
-        $installment_no = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'due_date' => $partial_date])->first()->installment_no;
+        $due_data = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'due_date' => $partial_date])->first();
         $outstanding = \App\Models\LoanPaymentDue::where(['loan_id' => $loanId, 'payment_status' => 1])->orderBy('id', 'desc')->first();
         $loan_history = \App\Models\LoanHistory::where('id', $loanId)->first();
+        
         if ($outstanding) {
             $outstanding = $outstanding->outstanding;
         } else {
             $outstanding = $loan_history->total_amount_pr;
         }
+        
         $partial = ($outstanding) * $percent / 100;
 
         $markup_percent = 0;
@@ -241,11 +244,11 @@ class LoanPaymentRecoveredController extends Controller {
             $upper_partial = ($outstanding) * $markup_percent / 100;
         }
                 
-        if($installment_no<=12){
+        if($due_data->installment_no<=12){
             $charges = 4.5;
-        } else if($installment_no<=24){
+        } else if($due_data->installment_no<=24){
             $charges = 3;
-        } else if($installment_no<=36){
+        } else if($due_data->installment_no<=36){
             $charges = 1.5;
         } else {
             $charges = 0;
@@ -261,23 +264,39 @@ class LoanPaymentRecoveredController extends Controller {
         $d['markup_percent'] = $markup_percent;
         $d['markup'] = $markup;
         
-        $TotalRemainingOutstanding = $outstanding-($partial+$upper_partial);
-        $loan_period = $loan_history->loan_period - $installment_no;
+        $TotalRemainingOutstanding = $outstanding-($partial);
+        $loan_period = $loan_history->loan_period - $due_data->installment_no;
         
-                $PayData = [
+        echo "<pre>";
+        print_r($d);
+        echo "</pre>";
+        
+//        $AboveData = \App\Models\LoanPaymentDue::where("due_date", $partial_date)->get()->toArray();
+        $AboveData = \App\Models\LoanPaymentDue::where([["due_date",">", $partial_date]])->update(['due_status'=>1]);
+        
+//        dd($AboveData);
+//        
+        $amount_total = $partial+$markup;
+        $amount_pr = $partial;
+        $recovered_date = date("Y-m-d");
+        $bank_slip_id = 1;
+        $userId = \Illuminate\Support\Facades\Auth::user()->id;
+
+        $PayData = [
             'loan_id' => $loanId,
-            'due_id' => 0,
+            'due_id' => $due_data->id,
             'amount_total' => $amount_total,
-            'amount_pr' => $amount_outstanding,
-            'amount_mu' => $amount_profit,
-            'amount_fed' => $amount_fed,
-            'amount_settlement' => $amount_settlement,
+            'amount_pr' => $amount_pr,
+            'amount_mu' => $markup,
+            'amount_fed' => 0,
+            'amount_settlement' => 0,
             'amount_takaful' => 0,
             'recovered_by' => $userId,
-            'recovered_date' => $recovered_date,
+            'payment_type'=>2,
+            'recovered_date' => $partial_date,
             'bank_slip_id' => $bank_slip_id
         ];
-
+//        dd($PayData);
         LoanPaymentRecovered::create($PayData);
         
         
@@ -509,16 +528,16 @@ class LoanPaymentRecoveredController extends Controller {
             }
             $MysqlScheduleDate = date("Y-m-d", strtotime($sScheduledRepaymentDate));
 
-//            \App\Models\LoanPaymentDue::create([
-//                'loan_id' => $LoanId,
-//                'installment_no' => $i,
-//                'due_date' => $MysqlScheduleDate,
-//                'amount_total' => $Total,
-//                'amount_pr' => $MonthlyPrinciple,
-//                'outstanding' => $ApprovedLoanAmount,
-//                'amount_mu' => $MonthlyServiceCharge,
-//                'amount_takaful' => $MonthlyTakaful
-//            ]);
+            \App\Models\LoanPaymentDue::create([
+                'loan_id' => $LoanId,
+                'installment_no' => $i,
+                'due_date' => $MysqlScheduleDate,
+                'amount_total' => $Total,
+                'amount_pr' => $MonthlyPrinciple,
+                'outstanding' => $ApprovedLoanAmount,
+                'amount_mu' => $MonthlyServiceCharge,
+                'amount_takaful' => $MonthlyTakaful
+            ]);
 
             $Return .= "<tr>"
                     . "<td>$i</td>"
