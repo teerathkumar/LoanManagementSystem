@@ -71,7 +71,11 @@ class FinGeneralLedgerController extends Controller {
 
     static function getChartOfAccountTitle($id) {
         $COA_Data = FinChartOfAccount::where('id', $id)->select('code', 'title')->first();
-        return $COA_Data->code . " - " . $COA_Data->title;
+        if ($COA_Data) {
+            return $COA_Data->code . " - " . $COA_Data->title;
+        } else {
+            return "";
+        }
     }
 
     static function convertNumberToWord($num = false) {
@@ -126,12 +130,12 @@ class FinGeneralLedgerController extends Controller {
 
         $finGeneralLedger = FinGeneralLedger::where('fin_general_ledgers.id', $id)->with('ledgerdetails')->first();
         $GJH_Result = \App\Models\FinGeneralLedgerHistory::where('finGeneralJournalId', $id)->with('user')->get();
-  
+
         return view('fin-general-ledger.process', compact('finGeneralLedger', 'GJH_Result'));
     }
 
     public function index() {
-        $finGeneralLedgers = FinGeneralLedger::whereIn('voucher_status', [3,4])->get();
+        $finGeneralLedgers = FinGeneralLedger::whereIn('voucher_status', [3, 4])->get();
         return view('fin-general-ledger.index', compact('finGeneralLedgers'))->with('i');
     }
 
@@ -217,19 +221,19 @@ class FinGeneralLedgerController extends Controller {
                     'user_id' => $userId, 'details' => $purpose, 'debit' => 0, 'credit' => 0, 'txn_date' => $TxnDate, 'txn_type' => $reference, 'txn_series' => $LastSeries, 'cheque_number' => $ChqNum, 'office_id' => 1
         ]);
         $FinGL_Id = $Model_GL->id;
-        
-                //Move Uploaded File
-        $destinationPath = base_path() . '/uploads/'.$FinGL_Id;
+
+        //Move Uploaded File
+        $destinationPath = base_path() . '/uploads/' . $FinGL_Id;
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0777, true);
         }
-        
-        if($file){
-        foreach($file as $key=>$file){
-            $fileName = date("YmdHis")."_".$FinGL_Id."_".$key.".".$file->getClientOriginalExtension();
-            //$file->move($destinationPath, $file->getClientOriginalName());
-            $file->move($destinationPath, $fileName);
-        }
+
+        if ($file) {
+            foreach ($file as $key => $file) {
+                $fileName = date("YmdHis") . "_" . $FinGL_Id . "_" . $key . "." . $file->getClientOriginalExtension();
+                //$file->move($destinationPath, $file->getClientOriginalName());
+                $file->move($destinationPath, $fileName);
+            }
         }
         $TotalDebit = 0;
         $TotalCredit = 0;
@@ -271,12 +275,12 @@ class FinGeneralLedgerController extends Controller {
         $gj_id = $request->get("gj_id");
         $action = $request->get("action");
         $VoucherStatus = FinGeneralLedger::where('id', $gj_id)->first()->voucher_status;
-        if(\Illuminate\Support\Facades\Auth::user()->user_type=="cfo"){
+        if (\Illuminate\Support\Facades\Auth::user()->user_type == "cfo") {
             $action_type = "3";
-        } else if(\Illuminate\Support\Facades\Auth::user()->user_type=="finance"){
+        } else if (\Illuminate\Support\Facades\Auth::user()->user_type == "finance") {
             $action_type = "1";
         }
-        
+
         FinGeneralLedger::where('id', $gj_id)->update(['voucher_status' => $action_type]);
 
         $insert = \App\Models\FinGeneralLedgerHistory::create(['finGeneralJournalId' => $gj_id, 'ProcessComment' => $userComment, 'ProcessTo' => 1, 'IsProcessed' => $action, 'ActionType' => $action_type, 'ProcessBy' => $userId]);
